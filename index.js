@@ -13,7 +13,7 @@ import { AppRegistry } from "react-native"
 /**
  * This needs to match what's found in your app_delegate.m and MainActivity.java.
  */
-const APP_NAME = "KelvinApp"
+const APP_NAME = "Kelvin"
 
 // Should we show storybook instead of our app?
 //

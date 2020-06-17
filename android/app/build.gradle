@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.kelvinapp"
+        applicationId "com.io.kelvin.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,4 +1,4 @@
-package com.kelvinapp;
+package com.io.kelvin.app;
 
 import android.app.Application;
 import android.content.Context;
