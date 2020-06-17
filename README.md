@@ -29,6 +29,8 @@ To launch the metro bundler.
 
 ## Design
 
+The design this [figma composite](https://www.figma.com/file/Ou4oSmu5ssGO8axsMz1qS1/Kelvin-App-Design?node-id=1%3A2) I created. It shuold help simplify things and have me move straight to the code.
+
 This app doesn't use any design framework like `react-native-paper`. I have created most elements design from scratch, some might be included from the [`ignite-bowser`](https://github.com/infinitered/ignite-bowser) boilerplate or using another package like [`react-native-confirmation-code-field`](https://github.com/retyui/react-native-confirmation-code-field)
 
 ##### PS
