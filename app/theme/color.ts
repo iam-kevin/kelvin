@@ -1,4 +1,5 @@
 import { palette } from "./palette"
+import { colors } from "./app"
 
 /**
  * Roles for colors.  Prefer using these over the palette.  It makes it easier
@@ -14,6 +15,13 @@ export const color = {
    * The palette is available to use, but prefer using the name.
    */
   palette,
+
+  /**
+   * The colors that apply to the app space.
+   * This contains colors like 'statusBar', ...
+   */
+  app: colors,
+
   /**
    * A helper for making something see-thru. Use sparingly as many layers of transparency
    * can cause older Android devices to slow down due to the excessive compositing required
