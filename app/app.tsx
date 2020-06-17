@@ -28,6 +28,7 @@ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 // stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
 // https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 import { enableScreens } from 'react-native-screens'
+import SplashScreen from "./screens/SplashScreen"
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
@@ -63,11 +64,12 @@ const App: Component<{}> = () => {
   return (
     <RootStoreProvider value={rootStore}>
       <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-        <RootNavigator
+        <SplashScreen />
+        {/* <RootNavigator
           ref={navigationRef}
           initialState={initialNavigationState}
           onStateChange={onNavigationStateChange}
-        />
+        /> */}
       </SafeAreaProvider>
     </RootStoreProvider>
   )
