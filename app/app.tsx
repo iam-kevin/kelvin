@@ -29,6 +29,7 @@ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 // https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 import { enableScreens } from 'react-native-screens'
 import SplashScreen from "./screens/SplashScreen"
+import WelcomeScreen from "./screens/WelcomeScreen"
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
@@ -58,13 +59,19 @@ const App: Component<{}> = () => {
   // In the meantime, don't render anything. This will be the background
   // color set in native by rootView's background color. You can replace
   // with your own loading component if you wish.
-  if (!rootStore) return null
+  if (!rootStore) {
+    return (
+      <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
+        <SplashScreen />
+      </SafeAreaProvider>
+    )
+  }
 
   // otherwise, we're ready to render the app
   return (
     <RootStoreProvider value={rootStore}>
       <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-        <SplashScreen />
+        <WelcomeScreen />
         {/* <RootNavigator
           ref={navigationRef}
           initialState={initialNavigationState}

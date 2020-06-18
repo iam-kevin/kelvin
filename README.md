@@ -19,6 +19,10 @@ The application is created using React Native (powered by ignite). The applicati
 
 There are scripts that are setup, to get started with the app..
 
+### yarn install
+
+To install the needed dependencies to get the application up and running.
+
 ### `yarn android`
 
 To run the android application. Either for the first time or if you want to re-bundle the application

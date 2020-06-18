@@ -73,6 +73,24 @@
 		<string>Montserrat-SemiBoldItalic.ttf</string>
 		<string>Montserrat-Thin.ttf</string>
 		<string>Montserrat-ThinItalic.ttf</string>
+		<string>DMSans-Bold.ttf</string>
+		<string>DMSans-BoldItalic.ttf</string>
+		<string>DMSans-Italic.ttf</string>
+		<string>DMSans-Medium.ttf</string>
+		<string>DMSans-MediumItalic.ttf</string>
+		<string>DMSans-Regular.ttf</string>
+		<string>ProductSans-Black.ttf</string>
+		<string>ProductSans-BlackItalic.ttf</string>
+		<string>ProductSans-Bold.ttf</string>
+		<string>ProductSans-BoldItalic.ttf</string>
+		<string>ProductSans-Italic.ttf</string>
+		<string>ProductSans-Light.ttf</string>
+		<string>ProductSans-LightItalic.ttf</string>
+		<string>ProductSans-Medium.ttf</string>
+		<string>ProductSans-MediumItalic.ttf</string>
+		<string>ProductSans-Regular.ttf</string>
+		<string>ProductSans-Thin.ttf</string>
+		<string>ProductSans-ThinItalic.ttf</string>
 	</array>
 </dict>
 </plist>
