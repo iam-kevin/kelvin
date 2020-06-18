@@ -59,32 +59,32 @@ const TITLE_COLOR = { color: '#E8FFA6' }
 const textStyles = StyleSheet.create({
   text: {
     ...BASE_COLOR,
-    fontFamily: 'DM Sans',
+    fontFamily: 'DMSans-Regular',
     textAlign: 'center',
     paddingVertical: 32,
   },
   minitext: {
     ...TITLE_COLOR,
-    fontFamily: 'DM Sans',
+    fontFamily: 'DMSans-Regular',
     fontSize: 12,
     textAlign: 'center',
     paddingVertical: 10,
   },
   subtitle: {
     ...TITLE_COLOR,
-    fontFamily: 'DM Sans',
+    fontFamily: 'DMSans-Regular',
     fontSize: 12,
   },
   title: {
     ...TITLE_COLOR,
-    fontFamily: 'Product Sans',
+    fontFamily: 'ProductSans-Regular',
     fontSize: 20,
   },
 })
 
 const TEXT = {
   color: color.palette.black,
-  fontFamily: "DM Sans",
+  fontFamily: "DMSans-Regular",
 }
 const BOLD = { fontWeight: "bold" }
 const buttonStyle = StyleSheet.create({
@@ -93,7 +93,7 @@ const buttonStyle = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[4],
-    
+
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -101,12 +101,12 @@ const buttonStyle = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
   },
   text: {
     ...TEXT,
     ...BOLD,
+    fontFamily: "DMSans-Regular",
     fontSize: 13,
     letterSpacing: 2,
   }

@@ -31,6 +31,7 @@ import { enableScreens } from 'react-native-screens'
 import SplashScreen from "./screens/SplashScreen"
 // import WelcomeScreen from "./screens/WelcomeScreen"
 import RegisterScreen from "./screens/RegisterScreen"
+import VerifyScreen from "./screens/VerifyScreen"
 
 enableScreens()
 
@@ -73,7 +74,7 @@ const App: Component<{}> = () => {
   return (
     <RootStoreProvider value={rootStore}>
       <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-        <RegisterScreen />
+        <VerifyScreen />
         {/* <RootNavigator
           ref={navigationRef}
           initialState={initialNavigationState}

@@ -7,6 +7,10 @@
   "errors": {
     "invalidEmail": "Invalid email address."
   },
+  "welcome": {
+    "register": "REGISTER NUMBER",
+    "verifyButton": "VERIFY NUMBER"
+  },
   "welcomeScreen": {
     "poweredBy": "POWERED BY BOWSER",
     "readyForLaunch": "Ready for launch.",

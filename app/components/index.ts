@@ -7,5 +7,10 @@ export * from "./icon/icon"
 export * from "./screen/screen"
 export * from "./switch/switch"
 export * from "./text/text"
-export * from "./text-field/text-field"
 export * from "./wallpaper/wallpaper"
+
+/**
+ * Custom added
+ */
+export * from "./text-fields/text-field/text-field"
+export * from "./text-fields/code-text-field/code-text-field"

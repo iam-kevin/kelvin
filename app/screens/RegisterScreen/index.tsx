@@ -26,7 +26,12 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: '#95FF61',
     backgroundColor: '#95FF61',
-    width: 181, height: 30, borderColor: 'gray', borderWidth: 1
+    width: 181, 
+    height: 40,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    fontFamily: 'DMSans-Medium',
   }
 })
 
@@ -78,31 +83,31 @@ const TITLE_COLOR = { color: '#E8FFA6' }
 const textStyles = StyleSheet.create({
   text: {
     ...BASE_COLOR,
-    fontFamily: 'DM Sans',
+    fontFamily: 'DMSans-Regular',
     textAlign: 'center',
   },
   minitext: {
     ...TITLE_COLOR,
-    fontFamily: 'DM Sans',
+    fontFamily: 'DMSans-Regular',
     fontSize: 12,
     textAlign: 'center',
     paddingVertical: 10,
   },
   subtitle: {
     ...TITLE_COLOR,
-    fontFamily: 'DM Sans',
+    fontFamily: 'DMSans-Regular',
     fontSize: 12,
   },
   title: {
     ...TITLE_COLOR,
-    fontFamily: 'Product Sans',
+    fontFamily: 'ProductSans-Regular',
     fontSize: 20,
   },
 })
 
 const TEXT = {
   color: color.palette.black,
-  fontFamily: "DM Sans",
+  fontFamily: 'DMSans-Regular',
 }
 const BOLD = { fontWeight: "bold" }
 const buttonStyle = StyleSheet.create({
@@ -136,8 +141,8 @@ const SubTitle = (props) => (<NativeText style={{ ...textStyles.subtitle, ...pro
 const Text = (props) => (<NativeText style={{ ...textStyles.text, ...props.style }} {...props} />)
 const MiniText = (props) => (<NativeText style={{ ...textStyles.minitext, ...props.style }} {...props} />)
 
-export default function WelcomeScreen() {
-  const nextScreen = () => console.log('Moving on...')
+export default function RegisterScreen() {
+  const nextScreen = () => console.log('Registering NUMBER')
   const [phoneNumber, setPhoneNumber] = useState('')
   return (
     <Container style={layoutStyles.container}>
@@ -146,8 +151,13 @@ export default function WelcomeScreen() {
         <View style={layoutStyles.intro}>
           <Title>You are new here</Title>
           <SubTitle>Register your phone number</SubTitle>
-          <Text style={{ paddingVertical: 32, color: color.palette.white, paddingHorizontal: 5}}>
-            Enter the phone number you would like to register for Kelvin
+          <Text style={{ ...textStyles.text,
+                          textAlign: 'left', 
+                          paddingVertical: 32, 
+                          color: color.palette.white, 
+                          paddingHorizontal: 5
+                        }}>
+            Enter the phone number you would like to register for Kelvin.
           </Text>
           <View style={layoutStyles.input}>
             <Text>+255</Text>
@@ -162,7 +172,7 @@ export default function WelcomeScreen() {
         <Button
           style={buttonStyle.shell}
           textStyle={buttonStyle.text}
-          tx="welcomeScreen.continue"
+          tx={"welcome.register"}
           onPress={nextScreen} />
       </View>
     </Container>
