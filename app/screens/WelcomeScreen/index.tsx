@@ -34,6 +34,7 @@ const layoutStyles = StyleSheet.create({
   footer: {
     // flex: 0.4
     paddingHorizontal: 54,
+    width: '100%'
   },
 
   info: {
