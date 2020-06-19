@@ -20,9 +20,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     textAlign: 'center',
   },
-  focusCell: {
-    borderColor: '#000',
-  },
 });
 
 
@@ -46,7 +43,7 @@ export const CodeTextField: Component<CodeTextFieldProps> = props => {
       renderCell={({ index, symbol, isFocused }) => (
         <Text
           key={index}
-          style={[{ ...styles.cell, ...props.cellStyle}, isFocused && {...styles.focusCell, ...props.focusedCellStyle}]}
+          style={[{ ...styles.cell, ...props.cellStyle}, isFocused && props.focusedCellStyle]}
           onLayout={getCellOnLayoutHandler(index)}>
           {symbol || (isFocused ? <Cursor /> : null)}
         </Text>

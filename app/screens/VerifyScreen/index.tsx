@@ -173,6 +173,17 @@ export default function VerifyScreen() {
               paddingVertical: 20,
               paddingHorizontal: 5,
               margin: 5,
+            }}
+            focusedCellStyle={{
+              backgroundColor: '#8AFF9D',
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
             }} />
         </View>
       </View>
