@@ -30,9 +30,11 @@ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 import { enableScreens } from 'react-native-screens'
 import SplashScreen from "./screens/SplashScreen"
 // import WelcomeScreen from "./screens/WelcomeScreen"
-import RegisterScreen from "./screens/RegisterScreen"
-import VerifyScreen from "./screens/VerifyScreen"
+// import RegisterScreen from "./screens/RegisterScreen"
+// import VerifyScreen from "./screens/VerifyScreen"
+import MainScreen from "./screens/MainScreen"
 
+import ChatContextProvider from "./context/chat-context"
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
@@ -74,7 +76,9 @@ const App: Component<{}> = () => {
   return (
     <RootStoreProvider value={rootStore}>
       <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-        <VerifyScreen />
+        <ChatContextProvider>
+          <MainScreen />
+        </ChatContextProvider>
         {/* <RootNavigator
           ref={navigationRef}
           initialState={initialNavigationState}
