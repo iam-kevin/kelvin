@@ -9,7 +9,6 @@ import { NavigationContainer, NavigationContainerRef } from "@react-navigation/n
 
 import { createNativeStackNavigator } from "react-native-screens/native-stack"
 import { WelcomeNavigator } from "./welcome-navigator"
-import { MainNavigator } from "./main-navigator"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -41,13 +40,6 @@ const RootStack = () => {
       <Stack.Screen
         name="welcomeStack"
         component={WelcomeNavigator}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="mainStack"
-        component={MainNavigator}
         options={{
           headerShown: false,
         }}

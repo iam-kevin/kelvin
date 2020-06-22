@@ -11,18 +11,24 @@
  */
 import "./i18n"
 import "./utils/ignore-warnings"
-import React, { useState, useEffect, useRef, FunctionComponent as Component } from "react"
+import React, { useState, useEffect, useRef, Component } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
+import { observe} from 'mobx'
+import { observer, Provider, inject } from 'mobx-react'
+// import 'mobx-react-lite'
+
 import { SafeAreaProvider, initialWindowSafeAreaInsets } from "react-native-safe-area-context"
 import * as storage from "./utils/storage"
 import {
   useBackButtonHandler,
-  RootNavigator,
-  canExit,
   setRootNavigation,
   useNavigationPersistence,
 } from "./navigation"
-import { RootStore, RootStoreProvider, setupRootStore } from "./models"
+
+import { canExit as rootCanExit, RootNavigator } from './navigation/root-navigator'
+import { canExit as mainCanExit, MainNavigator } from './navigation/main-navigator'
+
+import { RootStore, RootStoreProvider, setupRootStore, AuthStore } from "./models"
 
 // This puts screens in a native ViewController or Activity. If you want fully native
 // stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
@@ -37,16 +43,20 @@ export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 /**
  * This is the root component of our app.
  */
-const App: Component<{}> = () => {
-  const navigationRef = useRef<NavigationContainerRef>()
-  const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
 
+const App = () => {
+  const navigationRef = useRef<NavigationContainerRef>()
+
+  // store for the main application
+  const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
   setRootNavigation(navigationRef)
-  useBackButtonHandler(navigationRef, canExit)
   const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
     storage,
     NAVIGATION_PERSISTENCE_KEY,
   )
+  // TODO: ensure there is only ONE
+  //  Set back button handler to be dealt by the navigator
+  // useBackButtonHandler(navigationRef, rootCanExit)
 
   // Kick off initial async loading actions, like loading fonts and RootStore
   useEffect(() => {
@@ -65,16 +75,53 @@ const App: Component<{}> = () => {
   SplashScreen.hide()
 
   return (
-    <RootStoreProvider value={rootStore}>
-      <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-        <RootNavigator
-          ref={navigationRef}
-          initialState={initialNavigationState}
-          onStateChange={onNavigationStateChange}
-        />
-      </SafeAreaProvider>
-    </RootStoreProvider>
+    <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
+      <RootStoreProvider value={rootStore}>
+        <Provider authStore={new AuthStore()}>
+          <AuthenticatedApp
+            ref={navigationRef}
+            initialState={initialNavigationState}
+            onStateChange={onNavigationStateChange} />
+        </Provider>
+      </RootStoreProvider>
+    </SafeAreaProvider>
   )
 }
+
+/**
+ * Review the
+ * link: https://stackoverflow.com/questions/54393475/correct-way-of-creating-multiple-stores-with-mobx-and-injecting-it-into-to-a-com
+ */
+
+@inject(stores => {
+  authStore: new AuthStore()
+})
+@observer
+export class AuthenticatedApp extends Component {
+  render() {
+    if (this.props.authStore.authenticated) {
+      return (
+        // For logged in user
+        <MainNavigator
+          ref={this.props.ref}
+          initialState={this.props.initialState}
+          onStateChange={this.props.onStateChange}
+        />
+      )
+    } else {
+      return (
+        <RootNavigator
+          ref={this.props.ref}
+          initialState={this.props.initialState}
+          onStateChange={this.props.onStateChange}
+        />
+      )
+    }
+  }
+}
+
+const AuthenticatedApp = inject('authStore')(observer(({ authStore, ref, initialState, onStateChange }) => {
+  
+}))
 
 export default App

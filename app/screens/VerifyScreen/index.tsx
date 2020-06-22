@@ -5,7 +5,10 @@ import { View, StatusBar, Text as NativeText, StyleSheet, TextInput } from 'reac
 import MiniKelvinLogo from '../../assets/svg/MiniLogo'
 import { Button, CodeTextField } from "../../components"
 import { color, spacing } from "../../theme"
-import { useNavigation } from '@react-navigation/native'
+
+import auth from '@react-native-firebase/auth'
+import { saveString } from '../../utils/storage'
+import { useAuthStores } from '../../models'
 
 const VIEW_STYLE = { flex: 1 }
 const COLORED_VIEW_STYLE = { ...VIEW_STYLE, backgroundColor: '#009245' }
@@ -141,18 +144,34 @@ const Title = (props) => (<NativeText {...props} style={{ ...textStyles.title, .
 const SubTitle = (props) => (<NativeText {...props} style={{ ...textStyles.subtitle, ...props.style }} />)
 const Text = (props) => (<NativeText {...props} style={{ ...textStyles.text, ...props.style }} />)
 
+/**
+ * Length of the code
+ */
+const CODE_LENGTH = 6
+
 export default function VerifyScreen({ route }) {
-  // TODO: verify user using phone number
-  //  Update the token via async Storage
-  const nextScreen = () => console.log('verify number')
-
-  // TODO: Add API service that deals with this
+  //
+  const [confirm, setConfirm] = useState(null)
   const [code, setCode] = useState('')
-
-  const { phoneNumber: userPhoneNumber } = route.params
+  const authStore = useAuthStores()
 
   // TODO: bind phone number string with value in store
+  const { phoneNumber: userPhoneNumber } = route.params
   const phoneNumber = `+255${userPhoneNumber}`
+
+  // perform code sending
+  authStore.signIn(phoneNumber).then((confirm) => setConfirm(confirm))
+
+  // TODO: verify user using phone number
+  //  Update the token via async Storage
+  const verifyUser = async () => {
+    if (code.length !== CODE_LENGTH) {
+      console.log('Make sure the code length matched first')
+    } else {
+      console.log('Verifying')
+      authStore.confirmAndLink(confirm, code)
+    }
+  }
 
   return (
     <Container style={layoutStyles.container}>
@@ -171,7 +190,7 @@ export default function VerifyScreen({ route }) {
             Verify the number {phoneNumber} by entering the verification code sent to the number
           </Text>
           <CodeTextField
-            length={5}
+            length={CODE_LENGTH}
             value={code}
             changeCodeAction={setCode}
             cellStyle={{
@@ -202,7 +221,7 @@ export default function VerifyScreen({ route }) {
           style={buttonStyle.shell}
           textStyle={buttonStyle.text}
           tx={"welcome.verifyButton"}
-          onPress={nextScreen} />
+          onPress={() => verifyUser()} />
       </View>
     </Container>
   )

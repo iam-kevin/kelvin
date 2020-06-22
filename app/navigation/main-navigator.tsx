@@ -8,6 +8,7 @@ import ChatContextProvider from "../context/chat-context"
  * This will include a screen to introduce them as well as collect needed info
  */
 import { createNativeStackNavigator } from 'react-native-screens/native-stack'
+import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
 
 // Include the screens
 import MainScreen from '../screens/MainScreen'
@@ -30,12 +31,31 @@ function MainUnWrappedNavigator() {
   )
 }
 
+
+
 // Wrapping the needed information for the chat
 // TODO: Pass data for chats and other using mobx instead of ContextAPI
-export function MainNavigator () {
+export const MainNavigator = React.forwardRef<
+  NavigationContainerRef,
+  Partial<React.ComponentProps<typeof NavigationContainer>>
+>((props, ref) => {
   return (
-    <ChatContextProvider>
-      <MainUnWrappedNavigator />
-    </ChatContextProvider>
+    <NavigationContainer {...props} ref={ref}>
+      <ChatContextProvider>
+          <MainUnWrappedNavigator />
+      </ChatContextProvider>
+    </NavigationContainer>
   )
-}
+})
+
+/**
+ * A list of routes from which we're allowed to leave the app when
+ * the user presses the back button on Android.
+ *
+ * Anything not on this list will be a standard `back` action in
+ * react-navigation.
+ *
+ * `canExit` is used in ./app/app.tsx in the `useBackButtonHandler` hook.
+ */
+const exitRoutes = ["main"]
+export const canExit = (routeName: string) => exitRoutes.includes(routeName)
