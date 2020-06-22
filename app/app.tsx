@@ -29,12 +29,7 @@ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 // https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 import { enableScreens } from 'react-native-screens'
 import SplashScreen from 'react-native-splash-screen'
-// import WelcomeScreen from "./screens/WelcomeScreen"
-// import RegisterScreen from "./screens/RegisterScreen"
-// import VerifyScreen from "./screens/VerifyScreen"
-import MainScreen from "./screens/MainScreen"
 
-import ChatContextProvider from "./context/chat-context"
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
@@ -68,17 +63,15 @@ const App: Component<{}> = () => {
 
   // otherwise, we're ready to render the app
   SplashScreen.hide()
+
   return (
     <RootStoreProvider value={rootStore}>
       <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-        <ChatContextProvider>
-          <MainScreen />
-        </ChatContextProvider>
-        {/* <RootNavigator
+        <RootNavigator
           ref={navigationRef}
           initialState={initialNavigationState}
           onStateChange={onNavigationStateChange}
-        /> */}
+        />
       </SafeAreaProvider>
     </RootStoreProvider>
   )

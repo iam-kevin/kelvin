@@ -5,6 +5,7 @@ import { View, StatusBar, Text as NativeText, StyleSheet, TextInput } from 'reac
 import MiniKelvinLogo from '../../assets/svg/MiniLogo'
 import { Button, CodeTextField } from "../../components"
 import { color, spacing } from "../../theme"
+import { useNavigation } from '@react-navigation/native'
 
 const VIEW_STYLE = { flex: 1 }
 const COLORED_VIEW_STYLE = { ...VIEW_STYLE, backgroundColor: '#009245' }
@@ -140,9 +141,18 @@ const Title = (props) => (<NativeText {...props} style={{ ...textStyles.title, .
 const SubTitle = (props) => (<NativeText {...props} style={{ ...textStyles.subtitle, ...props.style }} />)
 const Text = (props) => (<NativeText {...props} style={{ ...textStyles.text, ...props.style }} />)
 
-export default function VerifyScreen() {
-  const nextScreen = () => console.log('Verifying number')
-  const [value, setValue] = useState('')
+export default function VerifyScreen({ route }) {
+  // TODO: verify user using phone number
+  //  Update the token via async Storage
+  const nextScreen = () => console.log('verify number')
+
+  // TODO: Add API service that deals with this
+  const [code, setCode] = useState('')
+
+  const { phoneNumber: userPhoneNumber } = route.params
+
+  // TODO: bind phone number string with value in store
+  const phoneNumber = `+255${userPhoneNumber}`
 
   return (
     <Container style={layoutStyles.container}>
@@ -151,26 +161,26 @@ export default function VerifyScreen() {
         <View style={layoutStyles.intro}>
           <Title>Verification</Title>
           <SubTitle>Verify the phone number</SubTitle>
-          <Text 
+          <Text
             style={{
               ...textStyles.text,
               textAlign: 'left',
               paddingVertical: 32,
               color: color.palette.white,
               paddingHorizontal: 5 }}>
-            Verify the number +255 712 324 885 by entering the verification code sent to the number
+            Verify the number {phoneNumber} by entering the verification code sent to the number
           </Text>
           <CodeTextField
             length={5}
-            value={value}
-            changeCodeAction={setValue}
+            value={code}
+            changeCodeAction={setCode}
             cellStyle={{
               backgroundColor: ACCENT_COLOR,
               fontFamily: 'DMSans-Medium',
               fontSize: 32,
               height: 'auto',
               width: 54,
-              paddingVertical: 20,
+              paddingVertical: 10,
               paddingHorizontal: 5,
               margin: 5,
             }}

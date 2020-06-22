@@ -5,6 +5,7 @@ import { View, StatusBar, Text as NativeText, StyleSheet, TextInput } from 'reac
 import MiniKelvinLogo from '../../assets/svg/MiniLogo'
 import { Button } from "../../components"
 import { color, spacing } from "../../theme"
+import { useNavigation } from '@react-navigation/native'
 
 const VIEW_STYLE = { flex: 1 }
 const COLORED_VIEW_STYLE = { ...VIEW_STYLE, backgroundColor: '#009245' }
@@ -138,12 +139,21 @@ const buttonStyle = StyleSheet.create({
 
 const Title = (props) => (<NativeText style={{ ...textStyles.title, ...props.style }} {...props} />)
 const SubTitle = (props) => (<NativeText style={{ ...textStyles.subtitle, ...props.style }} {...props} />)
-const Text = (props) => (<NativeText style={{ ...textStyles.text, ...props.style }} {...props} />)
-const MiniText = (props) => (<NativeText style={{ ...textStyles.minitext, ...props.style }} {...props} />)
+const Text = (props) => (<NativeText style={{ ...textStyles.text, ...props.style }} {...props} />)  
 
 export default function RegisterScreen() {
-  const nextScreen = () => console.log('Registering NUMBER')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const navigation = useNavigation()
+
+  // TODO: validate and pass phone number to next screen
+  //  Also validate phone number
+  const nextScreen = () => {
+    // send the phone number
+    navigation.navigate('verify', {
+      phoneNumber
+    })
+  }
+
   return (
     <Container style={layoutStyles.container}>
       <View style={layoutStyles.info}>
@@ -163,6 +173,7 @@ export default function RegisterScreen() {
             <Text>+255</Text>
             <TextInput
               style={styles.textInput}
+              keyboardType="phone-pad"
               onChangeText={text => setPhoneNumber(text)}
               value={phoneNumber} />
           </View>

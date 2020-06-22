@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -133,6 +134,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -179,8 +181,12 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
+    implementation 'com.android.support:multidex:1.0.3'
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    // implementation project(path: ":@react-native-firebase_auth")
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

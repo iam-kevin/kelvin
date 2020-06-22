@@ -8,7 +8,8 @@ import React from "react"
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
 
 import { createNativeStackNavigator } from "react-native-screens/native-stack"
-import { PrimaryNavigator } from "./primary-navigator"
+import { WelcomeNavigator } from "./welcome-navigator"
+import { MainNavigator } from "./main-navigator"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -21,7 +22,10 @@ import { PrimaryNavigator } from "./primary-navigator"
  *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
  */
 export type RootParamList = {
-  primaryStack: undefined
+  welcomeStack: undefined
+  mainStack: undefined
+    // TODO: add the user and messages related
+    //  states in this section of the application
 }
 
 const Stack = createNativeStackNavigator<RootParamList>()
@@ -32,13 +36,18 @@ const RootStack = () => {
       screenOptions={{
         headerShown: false,
         gestureEnabled: true,
-
-        stackPresentation: "modal",
       }}
     >
       <Stack.Screen
-        name="primaryStack"
-        component={PrimaryNavigator}
+        name="welcomeStack"
+        component={WelcomeNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="mainStack"
+        component={MainNavigator}
         options={{
           headerShown: false,
         }}
@@ -57,5 +66,17 @@ export const RootNavigator = React.forwardRef<
     </NavigationContainer>
   )
 })
+
+/**
+ * A list of routes from which we're allowed to leave the app when
+ * the user presses the back button on Android.
+ *
+ * Anything not on this list will be a standard `back` action in
+ * react-navigation.
+ *
+ * `canExit` is used in ./app/app.tsx in the `useBackButtonHandler` hook.
+ */
+const exitRoutes = ["welcome", "main"]
+export const canExit = (routeName: string) => exitRoutes.includes(routeName)
 
 RootNavigator.displayName = "RootNavigator"

@@ -5,6 +5,7 @@ import { View, StatusBar, Text as NativeText, StyleSheet } from 'react-native'
 import MiniKelvinLogo from '../../assets/svg/MiniLogo'
 import { Button } from "../../components"
 import { color, spacing } from "../../theme"
+import { useNavigation } from '@react-navigation/native'
 
 const VIEW_STYLE = { flex: 1 }
 const COLORED_VIEW_STYLE = { ...VIEW_STYLE, backgroundColor: '#009245' }
@@ -118,7 +119,8 @@ const Text = (props) => (<NativeText style={{ ...textStyles.text, ...props.style
 const MiniText = (props) => (<NativeText style={{ ...textStyles.minitext, ...props.style }} {...props} />)
 
 export default function WelcomeScreen() {
-  const nextScreen = () => console.log('Moving on...')
+  const navigation = useNavigation()
+  const nextScreen = () => navigation.navigate('register')
 
   return (
     <Container style={layoutStyles.container}>
