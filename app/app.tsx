@@ -11,10 +11,10 @@
  */
 import "./i18n"
 import "./utils/ignore-warnings"
+import "mobx-react-lite/batchingForReactNative"
 import React, { useState, useEffect, useRef, Component } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
-import { observe} from 'mobx'
-import { observer, Provider, inject } from 'mobx-react'
+import { observer } from 'mobx-react'
 // import 'mobx-react-lite'
 
 import { SafeAreaProvider, initialWindowSafeAreaInsets } from "react-native-safe-area-context"
@@ -28,7 +28,8 @@ import {
 import { canExit as rootCanExit, RootNavigator } from './navigation/root-navigator'
 import { canExit as mainCanExit, MainNavigator } from './navigation/main-navigator'
 
-import { RootStore, RootStoreProvider, setupRootStore, AuthStore } from "./models"
+import { RootStore, RootStoreProvider, setupRootStore,
+  AuthStore, AuthStoreProvider, useAuthStore } from "./models"
 
 // This puts screens in a native ViewController or Activity. If you want fully native
 // stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
@@ -77,12 +78,13 @@ const App = () => {
   return (
     <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
       <RootStoreProvider value={rootStore}>
-        <Provider authStore={new AuthStore()}>
+        {/* You might want to move `new AuthStore()` else where */}
+        <AuthStoreProvider value={new AuthStore()}>
           <AuthenticatedApp
-            ref={navigationRef}
+            navRef={navigationRef}
             initialState={initialNavigationState}
             onStateChange={onNavigationStateChange} />
-        </Provider>
+        </AuthStoreProvider>
       </RootStoreProvider>
     </SafeAreaProvider>
   )
@@ -93,35 +95,31 @@ const App = () => {
  * link: https://stackoverflow.com/questions/54393475/correct-way-of-creating-multiple-stores-with-mobx-and-injecting-it-into-to-a-com
  */
 
-@inject(stores => {
-  authStore: new AuthStore()
-})
-@observer
-export class AuthenticatedApp extends Component {
-  render() {
-    if (this.props.authStore.authenticated) {
-      return (
-        // For logged in user
-        <MainNavigator
-          ref={this.props.ref}
-          initialState={this.props.initialState}
-          onStateChange={this.props.onStateChange}
-        />
-      )
-    } else {
-      return (
-        <RootNavigator
-          ref={this.props.ref}
-          initialState={this.props.initialState}
-          onStateChange={this.props.onStateChange}
-        />
-      )
-    }
-  }
-}
+export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange }) => {
+  const authStore = useAuthStore()
 
-const AuthenticatedApp = inject('authStore')(observer(({ authStore, ref, initialState, onStateChange }) => {
-  
-}))
+  // Dont render anything if authentication isn't done
+  if (!authStore.isReady) return null
+
+  // ready to authenticate, render the page
+  if (authStore.authenticated) {
+    return (
+      // For logged in user
+      <MainNavigator
+        ref={navRef}
+        initialState={initialState}
+        onStateChange={onStateChange}
+      />
+    )
+  } else {
+    return (
+      <RootNavigator
+        ref={navRef}
+        initialState={initialState}
+        onStateChange={onStateChange}
+      />
+    )
+  }
+})
 
 export default App

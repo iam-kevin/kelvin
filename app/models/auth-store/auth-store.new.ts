@@ -18,55 +18,40 @@ export class AuthStore {
    * false, its done authenticating.
    * true, if processing
    */
-  @observable private isProcessingAuthentication = true
-
-  /**
-   * the token bound with the app
-   */
-  @observable token = null
-
-  constructor() {
-    this.notReadyToAuthenticate()
-
-    // try logging the user in
-    this.logIn()
-  }
+  @observable isProcessingAuthentication = true
 
   /**
    * true, main screen
    * false, user should be redirected to the
    * intro screen
    */
-  @computed get authenticated () {
+  @computed authenticated () {
     return this.token !== null
   }
 
   /**
+   * the token bound with the app
+   */
+  @observable token = null
+
+  /**
    * Get the current logged in user
    */
-  @computed get user() {
+  @computed getUser() {
     return auth().currentUser
-  }
-
-  @computed get isReady() {
-    return !this.isProcessingAuthentication
-  }
-
-  readyToAuthenticate() {
-    this.isProcessingAuthentication = false
-  }
-
-  notReadyToAuthenticate() {
-    this.isProcessingAuthentication = true
   }
 
   /**
    * [Login]
    * @param phoneNumber
    */
-  @action signIn(phoneNumber: string): Promise<FirebaseAuthTypes.ConfirmationResult> {
+  @computed async signIn(phoneNumber: string): Promise<FirebaseAuthTypes.ConfirmationResult> {
     // Ensure the user is confirmed
-    return auth().signInWithPhoneNumber(phoneNumber)
+    return await auth().signInWithPhoneNumber(phoneNumber)
+  }
+
+  @action private readyToAuthenticate() {
+    this.isProcessingAuthentication = false
   }
 
   /**
@@ -86,26 +71,21 @@ export class AuthStore {
 
       // Store login information
       this.storeLoginInfo(credentials, false)
-
-      // authenticate
-      this.readyToAuthenticate()
     } catch (e) {
       console.error('Unable to confirmAndLink')
       console.error(e)
     }
   }
 
-  storeLoginInfo(credentials: FirebaseAuthTypes.AuthCredential, tokenOnly: boolean) {
-    // Store token
-    this.token = this.user.uid
-    storage.save(KEY_TOKEN, this.token)
-    console.log('stored the KEY_TOKEN')
-    if (tokenOnly === true) return
-
+  @action private storeLoginInfo(credentials: FirebaseAuthTypes.AuthCredential, tokenOnly: boolean) {
+    if (tokenOnly === true) {
+      // Store token
+      this.token = this.getUser().uid
+      storage.save(KEY_TOKEN, this.token)
+      return
+    }
     // store the credentials
     storage.save(KEY_USER_CREDENTIALS, credentials)
-    console.log('stored the KEY_USER_CREDENTIALS')
-    console.log('Token:', this.token)
   }
 
   @action private deleteLoginInfo() {
@@ -118,28 +98,18 @@ export class AuthStore {
    * Performs login initially when the app loads
    * and checks if the user exists
    */
-  async logIn() {
+  @action async logIn() {
     // Check if the user exists
     if (this.token !== null) {
       throw new Error("Seems that you have logged in already. set token=null and run this again.")
     }
-
     // use credentials to log user in
     const credentials: FirebaseAuthTypes.AuthCredential = await storage.load(KEY_USER_CREDENTIALS)
-
-    // If not credentials, skip thie part
-    if (credentials === null) {
-      this.readyToAuthenticate()
-      return
-    }
 
     try {
       // signIn the user
       await auth().signInWithCredential(credentials)
       this.storeLoginInfo(credentials, true)
-
-      // authenticate
-      this.readyToAuthenticate()
     } catch (e) {
       console.log('[Main] failed to log you in')
     }

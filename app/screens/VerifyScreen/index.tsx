@@ -8,7 +8,7 @@ import { color, spacing } from "../../theme"
 
 import auth from '@react-native-firebase/auth'
 import { saveString } from '../../utils/storage'
-import { useAuthStores } from '../../models'
+import { useAuthStore } from '../../models'
 
 const VIEW_STYLE = { flex: 1 }
 const COLORED_VIEW_STYLE = { ...VIEW_STYLE, backgroundColor: '#009245' }
@@ -149,16 +149,16 @@ const Text = (props) => (<NativeText {...props} style={{ ...textStyles.text, ...
  */
 const CODE_LENGTH = 6
 
-export default function VerifyScreen({ route }) {
+function VerifyScreen({ route }) {
   //
   const [confirm, setConfirm] = useState(null)
   const [code, setCode] = useState('')
-  const authStore = useAuthStores()
 
   // TODO: bind phone number string with value in store
   const { phoneNumber: userPhoneNumber } = route.params
   const phoneNumber = `+255${userPhoneNumber}`
 
+  const authStore = useAuthStore()
   // perform code sending
   authStore.signIn(phoneNumber).then((confirm) => setConfirm(confirm))
 
@@ -226,3 +226,5 @@ export default function VerifyScreen({ route }) {
     </Container>
   )
 }
+
+export default VerifyScreen
