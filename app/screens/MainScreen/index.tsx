@@ -7,6 +7,7 @@ import HeaderLogo from '../../assets/svg/AltMiniHeaderLogo'
 
 import ChatArea, { chatAppend } from './chat-area'
 import { ChatContext, SEND_MESSAGE } from '../../context/chat-context'
+import { useStores } from '../../models'
 
 const VIEW_STYLE = { flex: 1 }
 
@@ -64,12 +65,9 @@ const AppHeader = () => {
 }
 
 export default function MainScreen() {
-  const [state, dispatch] = useContext(ChatContext)
+  const { chatStore } = useStores()
   const onSend = (messages) => {
-    dispatch({
-      type: SEND_MESSAGE,
-      messages: chatAppend(state.messages, messages)
-    })
+    chatStore.sendMessage(messages)
   }
 
   return (
@@ -77,7 +75,7 @@ export default function MainScreen() {
       <AppHeader />
       <ChatArea
         onSend={onSend}
-        messages={state.messages}/>
+        messages={chatStore.messages}/>
     </Container>
   )
 }

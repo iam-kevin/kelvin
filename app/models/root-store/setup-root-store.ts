@@ -1,5 +1,6 @@
 import { Environment } from "../environment"
 import { RootStore } from "./root-store"
+import { ChatStore } from "./chat-store"
 
 
 /**
@@ -18,8 +19,8 @@ export async function createEnvironment() {
 /**
  * Setup the root state.
  */
-export async function setupAuthStore() {
-  let rootStore: RootStore
+export async function setupRootStore() {
+  const rootStore: RootStore = new RootStore(new ChatStore())
 
   // prepare the environment that will be associated with the RootStore.
   const env = await createEnvironment()
