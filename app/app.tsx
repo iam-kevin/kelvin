@@ -72,9 +72,6 @@ const App = () => {
   // with your own loading component if you wish.
   if (!rootStore) return null
 
-  // otherwise, we're ready to render the app
-  SplashScreen.hide()
-
   return (
     <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
       <RootStoreProvider value={rootStore}>
@@ -100,6 +97,9 @@ export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange 
 
   // Dont render anything if authentication isn't done
   if (!authStore.isReady) return null
+
+  // otherwise, we're ready to render the app
+  SplashScreen.hide()
 
   // ready to authenticate, render the page
   if (authStore.authenticated) {
