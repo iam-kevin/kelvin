@@ -38,11 +38,6 @@ const initialMessages = [
   },
 ]
 export class RootStore {
-  /**
-   * Contains the chat related information and actions
-   */
-  chatStore = null
-
   constructor(chatStore: ChatStore) {
     this.chatStore = chatStore
   }

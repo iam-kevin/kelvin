@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react'
+import React, { useState, useEffect, useReducer, useContext, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { View, StatusBar, Text, StyleSheet } from 'react-native'
 
@@ -8,6 +8,7 @@ import HeaderLogo from '../../assets/svg/AltMiniHeaderLogo'
 import ChatArea, { chatAppend } from './chat-area'
 import { ChatContext, SEND_MESSAGE } from '../../context/chat-context'
 import { useStores } from '../../models'
+import { GiftedChat } from 'react-native-gifted-chat'
 
 const VIEW_STYLE = { flex: 1 }
 
@@ -66,16 +67,18 @@ const AppHeader = () => {
 
 export default function MainScreen() {
   const { chatStore } = useStores()
-  const onSend = (messages) => {
-    chatStore.sendMessage(messages)
-  }
+  const [messages, setMessages] = useState(chatStore.messages)
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(prevMessages => GiftedChat.append(prevMessages, messages))
+  }, [])
 
   return (
     <Container style={{ flex: 1 }}>
       <AppHeader />
       <ChatArea
         onSend={onSend}
-        messages={chatStore.messages}/>
+        messages={messages}/>
     </Container>
   )
 }

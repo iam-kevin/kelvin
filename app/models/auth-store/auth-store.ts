@@ -139,10 +139,11 @@ export class AuthStore {
       this.storeLoginInfo(credentials, true)
 
       // authenticate
-      this.readyToAuthenticate()
     } catch (e) {
-      console.log('[Main] failed to log you in')
+      console.warn('[Main] failed to log you in')
+      console.warn(e.message)
     }
+    this.readyToAuthenticate()
   }
 
   /**
