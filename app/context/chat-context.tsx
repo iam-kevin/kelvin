@@ -1,13 +1,17 @@
 import React, { createContext, useReducer } from 'react'
 import { IMessage } from 'react-native-gifted-chat'
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
+// import TcpSocket from 'react-native-tcp-socket'
 
 export const SEND_MESSAGE = 'SEND_MESSAGE'
 export const REGISTER_ON_CONNECT = 'REGISTER_ON_CONNECT'
 export const REGISTER_ON_DISCONNECT = 'REGISTER_ON_DISCONNECT'
 export const REGISTER_ON_REPLY = 'REGISTER_ON_REPLY'
 
-export const chatSocket = io.connect('http://178.62.101.62:5000')
+// export const chatSocket = TcpSocket.createConnection({
+//   host: '178.62.101.62',
+//   port: 5000
+// }, ) // io.connect('http://178.62.101.62:5000')
 const selfId = 1
 const userId = 2
 
@@ -86,19 +90,10 @@ interface ChatAction {
 const reducer = (state, action: ChatAction) => {
   switch (action.type) {
     case SEND_MESSAGE:
-      return ((newMessages: IMessage[]) => {
-        // Send the message to the server
-        newMessages.forEach((message) => {
-          const normMsg = normalizeMessageToServer(message)
-          chatSocket.emit('message', normMsg)
-          console.log('Sending', message, " to server")
-        })
-
-        return {
-          ...state,
-          messages: action.messages
-        }
-      })(action.newMessages)
+      return {
+        ...state,
+        messages: action.messages
+      }
     default:
       return state
   }

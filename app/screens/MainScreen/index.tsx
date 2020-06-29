@@ -6,11 +6,12 @@ import { color } from '../../theme'
 import HeaderLogo from '../../assets/svg/AltMiniHeaderLogo'
 
 import ChatArea from './chat-area'
-import ChatContextProvider, { ChatContext, SEND_MESSAGE, chatSocket, CONNECTED_MESSAGE, DISCONNECTED_MESSAGE, normalizeMessageToServer, normalizeMessage } from '../../context/chat-context'
+import ChatContextProvider, { ChatContext, SEND_MESSAGE, CONNECTED_MESSAGE, DISCONNECTED_MESSAGE, normalizeMessageToServer, normalizeMessage } from '../../context/chat-context'
 import { GiftedChat, IMessage } from 'react-native-gifted-chat'
 import { initialMessages } from '../../models/root-store/root-store'
 
-const io = require('socket.io-client')
+import io from 'socket.io-client'
+
 const VIEW_STYLE = { flex: 1 }
 
 const Container = ({ children, style }) => {
@@ -68,8 +69,9 @@ const AppHeader = () => {
 
 function MainScreen() {
   // const rootStore = useStores()
+  // @ts-ignore
   const [state, dispatch] = useContext(ChatContext)
-
+  const chatSocket = io.connect('http://178.62.101.62:5000')
   /**
    * Updates the message renders
    */
@@ -80,24 +82,23 @@ function MainScreen() {
       newMessages
     })
   }
-  useEffect(() => {
+  chatSocket.on('connect', function() {
+    updateMessages([CONNECTED_MESSAGE])
+    console.log('Connected to host')
+  })
 
-    chatSocket.on('connect', function() {
-      updateMessages([CONNECTED_MESSAGE])
-      console.log('Connected to host')
-    })
+  chatSocket.on('disconnect', function() {
+    updateMessages([DISCONNECTED_MESSAGE])
+    console.log('Disconnected from host')
+  })
 
-    chatSocket.on('disconnect', function() {
-      updateMessages([DISCONNECTED_MESSAGE])
-      console.log('Disconnected from host')
-    })
-
-    chatSocket.on('reply', function(data) {
-      const usableMessage = normalizeMessage(data as PMessage, 'kelvin')
-      updateMessages([usableMessage])
-      console.log('Replied with: ', data)
-    })
-  }, [])
+  chatSocket.on('reply', function(data) {
+    const usableMessage = normalizeMessage(data as PMessage, 'kelvin')
+    updateMessages([usableMessage])
+    console.log('Replied with: ', data)
+  })
+  // useEffect(() => {
+  // }, [])
   // const updateSingleMessage = (message) => updateMessages([message])
 
   // // Registers renders to update the
