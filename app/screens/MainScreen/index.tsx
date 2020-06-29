@@ -5,14 +5,12 @@ import { View, StatusBar, Text, StyleSheet } from 'react-native'
 import { color } from '../../theme'
 import HeaderLogo from '../../assets/svg/AltMiniHeaderLogo'
 
-import ChatArea, { chatAppend } from './chat-area'
-import { ChatContext, SEND_MESSAGE } from '../../context/chat-context'
-import { useStores, RootStoreProvider } from '../../models'
+import ChatArea from './chat-area'
+import ChatContextProvider, { ChatContext, SEND_MESSAGE, chatSocket, CONNECTED_MESSAGE, DISCONNECTED_MESSAGE, normalizeMessageToServer, normalizeMessage } from '../../context/chat-context'
 import { GiftedChat, IMessage } from 'react-native-gifted-chat'
-import { observable } from 'mobx'
-import { ChatStore, initialMessages } from '../../models/root-store/chat-store'
-import { observer } from 'mobx-react'
+import { initialMessages } from '../../models/root-store/root-store'
 
+const io = require('socket.io-client')
 const VIEW_STYLE = { flex: 1 }
 
 const Container = ({ children, style }) => {
@@ -69,12 +67,51 @@ const AppHeader = () => {
 }
 
 function MainScreen() {
-  const { chatStore } = useStores()
-  const [messages, setMessages] = useState(initialMessages)
+  // const rootStore = useStores()
+  const [state, dispatch] = useContext(ChatContext)
+
+  /**
+   * Updates the message renders
+   */
+  const updateMessages = (newMessages: IMessage[]) => {
+    dispatch({
+      type: SEND_MESSAGE,
+      messages: GiftedChat.append(state.messages, newMessages),
+      newMessages
+    })
+  }
+  useEffect(() => {
+
+    chatSocket.on('connect', function() {
+      updateMessages([CONNECTED_MESSAGE])
+      console.log('Connected to host')
+    })
+
+    chatSocket.on('disconnect', function() {
+      updateMessages([DISCONNECTED_MESSAGE])
+      console.log('Disconnected from host')
+    })
+
+    chatSocket.on('reply', function(data) {
+      const usableMessage = normalizeMessage(data as PMessage, 'kelvin')
+      updateMessages([usableMessage])
+      console.log('Replied with: ', data)
+    })
+  }, [])
+  // const updateSingleMessage = (message) => updateMessages([message])
+
+  // // Registers renders to update the
+  // // message screen at different points
+  // rootStore.registerOnConnect(updateSingleMessage)
+  // rootStore.registerOnDisconnect(updateSingleMessage)
+  // rootStore.registerOnReply(updateSingleMessage)
 
   const onSend = (newMessages: IMessage[] = []) => {
-    setMessages(GiftedChat.append(messages, newMessages))
-    // chatStore.onSend(messages)
+    // updates the message render
+    updateMessages(newMessages)
+
+    // Sends the message to the server
+    newMessages.forEach((msg) => chatSocket.emit('message', normalizeMessageToServer(msg)))
   }
 
   return (
@@ -82,9 +119,9 @@ function MainScreen() {
       <AppHeader />
       <ChatArea
         onSend={onSend}
-        messages={messages}/>
+        messages={state.messages}/>
     </Container>
   )
 }
 
-export default observer(MainScreen)
+export default () => (<ChatContextProvider><MainScreen /></ChatContextProvider>)

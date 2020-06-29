@@ -1,7 +1,5 @@
 import { Environment } from "../environment"
 import { RootStore } from "./root-store"
-import { ChatStore, chatStore } from "./chat-store"
-
 
 /**
  * Setup the environment that all the models will be sharing.
@@ -20,7 +18,7 @@ export async function createEnvironment() {
  * Setup the root state.
  */
 export async function setupRootStore() {
-  const rootStore: RootStore = new RootStore(new ChatStore())
+  const rootStore: RootStore = new RootStore()
 
   // prepare the environment that will be associated with the RootStore.
   const env = await createEnvironment()

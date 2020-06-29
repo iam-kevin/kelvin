@@ -74,7 +74,7 @@ const App = () => {
 
   return (
     <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-      <RootStoreProvider value={rootStore}>
+      <RootStoreProvider value={new RootStore()}>
         {/* You might want to move `new AuthStore()` else where */}
         <AuthStoreProvider value={new AuthStore()}>
           <AuthenticatedApp

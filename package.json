@@ -70,6 +70,8 @@
     "@types/react": "16.9.23",
     "@types/react-native": "0.61.23",
     "@types/react-test-renderer": "16.9.2",
+    "@types/socket.io": "^2.1.8",
+    "@types/socket.io-client": "^1.4.33",
     "@typescript-eslint/eslint-plugin": "^2.24.0",
     "@typescript-eslint/parser": "^2.24.0",
     "babel-jest": "^26.0.1",
