@@ -38,6 +38,8 @@ const initialMessages = [
   },
 ]
 export class RootStore {
+  chatStore: ChatStore
+
   constructor(chatStore: ChatStore) {
     this.chatStore = chatStore
   }

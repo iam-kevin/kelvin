@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import { fromString } from 'uuidv4'
 import { act } from "react-test-renderer"
 
-const initialMessages: Array<IMessage> = [
+export const initialMessages: Array<IMessage> = [
   {
     _id: 2,
     text: 'Ungependa kujua nini?',
@@ -52,13 +52,13 @@ export class ChatStore {
    */
   messages: IObservableArray<IMessage> = observable(initialMessages)
 
-  private selfId: string
-  private userId: string
+  private selfId: string | number
+  private userId: string | number
   chatSocket: WebSocket | any
 
   constructor() {
-    this.selfId = fromString('kelvin')
-    this.userId = fromString('user')
+    this.selfId = 1 // fromString('kelvin')
+    this.userId = 2 // fromString('user')
 
     // connect to the server related to python
     this.chatSocket = io('ws://178.62.101.62:5000')
@@ -128,13 +128,16 @@ export class ChatStore {
   }
 
   @action.bound
-  onSend(message: IMessage) {
+  onSend(messages: IMessage[]) {
     // Send data to server
-    const normMessage = this.normalizeMessageToServer(message)
-    console.log(normMessage)
+    messages.forEach(message => {
+      const normMessage = this.normalizeMessageToServer(message)
+      console.log(normMessage)
+
+      this.chatSocket.emit('message', normMessage)
+    })
 
     // update the board
-    this.updateMessageBoard([message])
-    this.chatSocket.emit('message', normMessage)
+    this.updateMessageBoard(messages)
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useReducer, useContext, useCallback, Component } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { View, StatusBar, Text, StyleSheet } from 'react-native'
 
@@ -7,8 +7,11 @@ import HeaderLogo from '../../assets/svg/AltMiniHeaderLogo'
 
 import ChatArea, { chatAppend } from './chat-area'
 import { ChatContext, SEND_MESSAGE } from '../../context/chat-context'
-import { useStores } from '../../models'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { useStores, RootStoreProvider } from '../../models'
+import { GiftedChat, IMessage } from 'react-native-gifted-chat'
+import { observable } from 'mobx'
+import { ChatStore, initialMessages } from '../../models/root-store/chat-store'
+import { observer } from 'mobx-react'
 
 const VIEW_STYLE = { flex: 1 }
 
@@ -65,13 +68,14 @@ const AppHeader = () => {
   )
 }
 
-export default function MainScreen() {
+function MainScreen() {
   const { chatStore } = useStores()
-  const [messages, setMessages] = useState(chatStore.messages)
+  const [messages, setMessages] = useState(initialMessages)
 
-  const onSend = useCallback((messages = []) => {
-    setMessages(prevMessages => GiftedChat.append(prevMessages, messages))
-  }, [])
+  const onSend = (newMessages: IMessage[] = []) => {
+    setMessages(GiftedChat.append(messages, newMessages))
+    // chatStore.onSend(messages)
+  }
 
   return (
     <Container style={{ flex: 1 }}>
@@ -82,3 +86,5 @@ export default function MainScreen() {
     </Container>
   )
 }
+
+export default observer(MainScreen)

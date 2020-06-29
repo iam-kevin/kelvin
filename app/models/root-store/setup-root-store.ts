@@ -1,6 +1,6 @@
 import { Environment } from "../environment"
 import { RootStore } from "./root-store"
-import { ChatStore } from "./chat-store"
+import { ChatStore, chatStore } from "./chat-store"
 
 
 /**
