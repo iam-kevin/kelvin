@@ -1575,6 +1575,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-8.0.6.tgz#31c48bb5c281c69577313b9b1303c56bbf971540"
   integrity sha512-VjHQU0M6zMUL84+a0dcPQqW4RACSZYXMKvVv/TbbYy7L4mazWIsAO07J+EJkb5gL4LpQVwzfGYht6HQxZXLZkg==
 
+"@react-native-firebase/database@^7.2.6":
+  version "7.2.6"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-7.2.6.tgz#18504044384a6ef067ba5df3085291f695952336"
+  integrity sha512-Ruz/Uel/AsHJ5xGXmMcal73ubYHod1MfSIOu9iZi3mCUBYdSokbRcqIfSyhbkOnx+G04NW9OAgTFgYxkav26HQ==
+
 "@react-navigation/core@^5.9.0":
   version "5.9.0"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.9.0.tgz#013bcfad898d8cf3bfb7cab3bf796afb660285a9"

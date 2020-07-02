@@ -6,6 +6,8 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import * as storage from '../../utils/storage'
 
+import database from '@react-native-firebase/database'
+
 const KEY_USER_PHONE_NUMBER = 'USER_PHONE_NUMBER'
 const KEY_USER_CREDENTIALS = 'USER_CREDENTIALS'
 const KEY_TOKEN = 'KEY_TOKEN_UUID'
@@ -20,6 +22,7 @@ export class AuthStore {
    */
   @observable private isProcessingAuthentication = true
 
+  @observable private _userId = null
   /**
    * the token bound with the app
    */
@@ -50,6 +53,26 @@ export class AuthStore {
 
   @computed get isReady() {
     return !this.isProcessingAuthentication
+  }
+
+  /**
+   * Get the user ID as stored
+   * in the firebase database
+   * users/{userId}
+   */
+  @computed get userId(): string {
+    // If its stored, return it
+    if (this._userId !== null) {
+      // If not, fetch from database
+      database()
+        .ref('users/')
+        .once('value')
+        .then(snap => {
+          this._userId = snap.val().id
+        })
+    }
+
+    return this._userId
   }
 
   readyToAuthenticate() {

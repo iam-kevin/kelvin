@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useReducer, useContext, useCallback, Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { View, StatusBar, Text, StyleSheet } from 'react-native'
 
 import { color } from '../../theme'
 import HeaderLogo from '../../assets/svg/AltMiniHeaderLogo'
-
 import ChatArea from './chat-area'
-import ChatContextProvider, { ChatContext, SEND_MESSAGE, CONNECTED_MESSAGE, DISCONNECTED_MESSAGE, normalizeMessageToServer, normalizeMessage } from '../../context/chat-context'
 import { GiftedChat, IMessage } from 'react-native-gifted-chat'
-import { initialMessages } from '../../models/root-store/root-store'
 
-import io from 'socket.io-client'
+import { useRootStore, useAuthStore } from '../../models'
+import { Message } from "../../typings"
+import database from '@react-native-firebase/database'
+import { normalizeMessage, buildGiftedUserObj } from '../../utils/message'
 
 const VIEW_STYLE = { flex: 1 }
 
@@ -29,10 +29,10 @@ const layoutStyles = StyleSheet.create({
   appHeader: {
     // flex: 1,
     height: 80,
-    width: '100%',
+    justifyContent: "center",
     // backgroundColor: '#777',
     paddingHorizontal: 27,
-    justifyContent: "center",
+    width: '100%',
   },
   leftHeader: {
     flex: 1,
@@ -67,52 +67,55 @@ const AppHeader = () => {
   )
 }
 
-function MainScreen() {
+export default function MainScreen() {
   // const rootStore = useStores()
   // @ts-ignore
-  const [state, dispatch] = useContext(ChatContext)
-  const chatSocket = io.connect('http://178.62.101.62:5000')
+  const rootStore = useRootStore()
+  const authStore = useAuthStore()
+
+  const [chatId, setChatId] = useState<string | undefined>(undefined)
+
   /**
-   * Updates the message renders
+   * Renders messages and addind to state
+   * @param newMessages
    */
-  const updateMessages = (newMessages: IMessage[]) => {
-    dispatch({
-      type: SEND_MESSAGE,
-      messages: GiftedChat.append(state.messages, newMessages),
-      newMessages
+  const renderMessages = (newMessages: IMessage[]) => {
+    rootStore.updateUIMessage((prevMessage) => {
+      return GiftedChat.append(prevMessage, newMessages)
     })
   }
-  chatSocket.on('connect', function() {
-    updateMessages([CONNECTED_MESSAGE])
-    console.log('Connected to host')
-  })
 
-  chatSocket.on('disconnect', function() {
-    updateMessages([DISCONNECTED_MESSAGE])
-    console.log('Disconnected from host')
-  })
+  useEffect(() => {
+    // load the messages
+    rootStore.loadMessages(authStore.userId, setChatId)
 
-  chatSocket.on('reply', function(data) {
-    const usableMessage = normalizeMessage(data as PMessage, 'kelvin')
-    updateMessages([usableMessage])
-    console.log('Replied with: ', data)
-  })
-  // useEffect(() => {
-  // }, [])
-  // const updateSingleMessage = (message) => updateMessages([message])
+    // add listener to listen to 
+    // added messages on the messages subcollection
+    const onAddMessage = database()
+      .ref(`chats/${chatId}/messages/`)
+      .on('child_added', snap => {
+        const gUser = buildGiftedUserObj(authStore.userId)
+        const message = normalizeMessage(gUser)(snap.val() as Message)
 
-  // // Registers renders to update the
-  // // message screen at different points
-  // rootStore.registerOnConnect(updateSingleMessage)
-  // rootStore.registerOnDisconnect(updateSingleMessage)
-  // rootStore.registerOnReply(updateSingleMessage)
+        // render messages to the screen
+        renderMessages([message])
+      })
 
+    // remove the listener
+    return () => database()
+      .ref(`chats/${chatId}/messages/`)
+      .off('child_added', onAddMessage)
+  }, [])
+
+  /**
+   * Action when the message is sent
+   * Controls how to rende the message to the screen
+   */
   const onSend = (newMessages: IMessage[] = []) => {
     // updates the message render
-    updateMessages(newMessages)
-
-    // Sends the message to the server
-    newMessages.forEach((msg) => chatSocket.emit('message', normalizeMessageToServer(msg)))
+    rootStore.sendNewMessage(chatId, newMessages[0], 'user').then(() => {
+      renderMessages(newMessages)
+    })
   }
 
   return (
@@ -120,9 +123,7 @@ function MainScreen() {
       <AppHeader />
       <ChatArea
         onSend={onSend}
-        messages={state.messages}/>
+        messages={rootStore.messages}/>
     </Container>
   )
 }
-
-export default () => (<ChatContextProvider><MainScreen /></ChatContextProvider>)

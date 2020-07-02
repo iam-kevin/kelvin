@@ -1,7 +1,10 @@
-import { computed, action, observable, IObservableArray } from "mobx"
-import { GiftedChat, IMessage } from "react-native-gifted-chat"
-import { types, onSnapshot } from "mobx-state-tree"
-import { normalizeMessage } from "../../context/chat-context"
+import { Instance, types, flow } from "mobx-state-tree"
+import { IMessage } from "react-native-gifted-chat"
+
+import database from '@react-native-firebase/database'
+import { Message } from "../../typings"
+import { normalizeMessage, buildGiftedUserObj, normalizeMessageToServer } from "../../utils/message"
+import { firebase } from "@react-native-firebase/auth"
 
 export interface Reply {
   title: string;
@@ -44,69 +47,75 @@ const ChatMessage = types.custom<string, IMessage>({
 })
 
 /**
- * Store
+ * A RootStore model.
  */
-const RootStoreModel = types.model("RootStore", {
-  messages: types.array(ChatMessage),
-}).actions(self => ({
-  /**
-   * Sending the message
-   */
-  sendMessage: (newMessage: PMessage, sender: SenderType, ...GiftedChatOptions) => {
-    const message: IMessage = normalizeMessage(newMessage, sender)
-
-    // update the message
-    self.messages.replace(GiftedChat.append(self.messages, [message], ...GiftedChatOptions))
-  },
-
-  /**
-   * Update
-   */
-  updateMessageBoard: (newMessages: IMessage[], ...GiftedChatOptions) => {
-    // update the message
-    self.messages.replace(GiftedChat.append(self.messages, newMessages, ...GiftedChatOptions))
-  }
-}))
-
-const rootStoreInstance = RootStoreModel.create({
-  messages: [
-    {
-      _id: 2,
-      text: 'Ungependa kujua nini?',
-      createdAt: new Date(),
-      quickReplies: {
-        type: 'radio', // or 'checkbox',
-        keepIt: true,
-        // @ts-ignore
-        position: 'right',
-        values: [
-          {
-            title: 'Hali ya hewa',
-            value: 'weather',
-          },
-          {
-            title: 'Shida ya mazao yangu',
-            value: 'plant_disease',
-          },
-          {
-            title: 'hali zipi zintakiwezesha nioteshe',
-            value: 'crop_yield',
-          },
-        ],
-      },
-      user: {
-        _id: 2,
-        name: 'Kelvin',
-      },
+// prettier-ignore
+export const RootStoreModel = types.model("RootStore")
+  .props({
+    messages: types.array(ChatMessage),
+  })
+  .actions(self => ({
+    // ----------------------
+    // UI-related updates
+    // ----------------------
+    /**
+     * Sending the message
+     */
+    updateUIMessage: (addMessageCallback: (previousMessage: IMessage[]) => IMessage[]) => {
+      // update the message
+      self.messages.replace(addMessageCallback(self.messages))
     },
-    {
-      _id: 1,
-      text: 'Za kwako Kevin James. Mimi ni K.E.L.V.I.N.',
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: 'Kelvin',
-      },
-    },
-  ]
-})
+  }))
+  .actions(self => ({
+    // ----------------------
+    // API-related updates
+    // ----------------------
+    /**
+     * Load the messages from the database
+     */
+    loadMessages: flow(function * loadMessages(userId: string, chatAction: React.Dispatch<React.SetStateAction<string>>) {
+      // Initial message loading
+      database()
+        .ref(`users/${userId}`)
+        .once('value')
+        .then(snap => {
+          // check to obtain the chatId value
+          const chatId: string = snap.val().chatId
+          chatAction(chatId)
+
+          // load all messages from values
+          database()
+            .ref(`chats/${chatId}/messages`)
+            .once('value')
+            .then(snap => {
+              // load all the images
+              const messages: Array<Message> = snap.val()
+
+              const giftedUser = buildGiftedUserObj(userId)
+              self.messages.replace(messages.map(normalizeMessage(giftedUser)))
+            })
+        })
+    }),
+
+    /**
+     * Send message to the firebase server
+     */
+    sendNewMessage: flow(function * sendNewMessage(chatId: string, message: IMessage, sender: 'kelvin' | 'user') {
+      // send message
+      const newMsgRef = database()
+        .ref(`chats/${chatId}/messages/`)
+        .push()
+
+      // generate key
+      console.log('Generated key', newMsgRef.key)
+
+      // Send data to server
+      const msgToSvr = normalizeMessageToServer(message, sender, firebase.database().getServerTime())
+      newMsgRef.set(msgToSvr).then(() => console.log('Data added'))
+    })
+  }))
+
+/**
+ * The RootStore instance.
+ */
+export interface RootStore extends Instance<typeof RootStoreModel> {}

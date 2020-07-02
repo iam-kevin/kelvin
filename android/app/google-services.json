@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "59741757208",
-    "firebase_url": "https://kelvin-166d3.firebaseio.com",
-    "project_id": "kelvin-166d3",
-    "storage_bucket": "kelvin-166d3.appspot.com"
+    "project_number": "179777115197",
+    "firebase_url": "https://kelvin-fbf-fyp.firebaseio.com",
+    "project_id": "kelvin-fbf-fyp",
+    "storage_bucket": "kelvin-fbf-fyp.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:59741757208:android:7ee3104949b6be2739886d",
+        "mobilesdk_app_id": "1:179777115197:android:c98cd4cd4f2bc296244654",
         "android_client_info": {
           "package_name": "com.io.kelvin.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "59741757208-dh9b792hf0h06pnug8fbh7lmn1q8ug0o.apps.googleusercontent.com",
+          "client_id": "179777115197-h86qj64mfeu3d4p97100iafspuhp8g3o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAlbJzF0EeMvhdGq9dGOSe2P9JZTVR14CY"
+          "current_key": "AIzaSyBFT3khGhM8KWchVgJRqs5xqBp3YHirTY0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "59741757208-dh9b792hf0h06pnug8fbh7lmn1q8ug0o.apps.googleusercontent.com",
+              "client_id": "179777115197-h86qj64mfeu3d4p97100iafspuhp8g3o.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
