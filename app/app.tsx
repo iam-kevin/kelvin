@@ -14,7 +14,7 @@ import "./utils/ignore-warnings"
 import "mobx-react-lite/batchingForReactNative"
 import React, { useState, useEffect, useRef, Component } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
-import { observer, Provider } from 'mobx-react'
+import { observer } from 'mobx-react'
 // import 'mobx-react-lite'
 
 import { SafeAreaProvider, initialWindowSafeAreaInsets } from "react-native-safe-area-context"
@@ -48,6 +48,8 @@ export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 const App = () => {
   const navigationRef = useRef<NavigationContainerRef>()
 
+  // store for the main application
+  const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
   setRootNavigation(navigationRef)
   const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
     storage,
@@ -56,27 +58,6 @@ const App = () => {
   // TODO: ensure there is only ONE
   //  Set back button handler to be dealt by the navigator
   // useBackButtonHandler(navigationRef, rootCanExit)
-
-  return (
-    <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
-      {/* You might want to move `new AuthStore()` else where */}
-      <AuthStoreProvider value={new AuthStore()}>
-        <AuthenticatedApp
-          navRef={navigationRef}
-          initialState={initialNavigationState}
-          onStateChange={onNavigationStateChange} />
-      </AuthStoreProvider>
-    </SafeAreaProvider>
-  )
-}
-
-export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange }) => {
-  const authStore = useAuthStore()
-  // store for the main application
-  const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
-
-  // Dont render anything if authentication isn't done
-  if (!authStore.isReady) return null
 
   // Kick off initial async loading actions, like loading fonts and RootStore
   useEffect(() => {
@@ -91,6 +72,26 @@ export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange 
   // with your own loading component if you wish.
   if (!rootStore) return null
 
+  return (
+    <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
+      <AuthStoreProvider value={new AuthStore()}>
+        <RootStoreProvider value={rootStore}>
+          <AuthenticatedApp
+            navRef={navigationRef}
+            initialState={initialNavigationState}
+            onStateChange={onNavigationStateChange} />
+        </RootStoreProvider>
+      </AuthStoreProvider>
+    </SafeAreaProvider>
+  )
+}
+
+export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange }) => {
+  const authStore = useAuthStore()
+
+  // Dont render anything if authentication isn't done
+  if (!authStore.isReady) return null
+
   // otherwise, we're ready to render the app
   SplashScreen.hide()
 
@@ -98,13 +99,11 @@ export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange 
   if (authStore.authenticated) {
     return (
       // For logged in user
-      <RootStoreProvider value={rootStore}>
-        <MainNavigator
-          ref={navRef}
-          initialState={initialState}
-          onStateChange={onStateChange}
-        />
-      </RootStoreProvider>
+      <MainNavigator
+        ref={navRef}
+        initialState={initialState}
+        onStateChange={onStateChange}
+      />
     )
   } else {
     return (

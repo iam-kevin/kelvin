@@ -115,6 +115,51 @@ export const RootStoreModel = types.model("RootStore")
     })
   }))
 
+//   /**
+//    * Load the messages from the database
+//    */
+//   loadMessages: flow(function * loadMessages(userId: string, chatAction: React.Dispatch<React.SetStateAction<string>>) {
+//     // Initial message loading
+//     return firestore()
+//       .collection(`users`)
+//       .doc(userId)
+//       .get()
+//       .then(snap => {
+//         // check to obtain the chatId value
+//         const chatId: string = snap.get('chatId')
+//         chatAction(chatId)
+
+//         // load all messages from values
+//         firestore()
+//           .doc(`chats/${chatId}`)
+//           .collection(`messages`)
+//           .get()
+//           .then(snap => {
+//             // load all the images
+//             const giftedUser = buildGiftedUserObj(userId)
+
+//             // render messages to the screen
+//             const messages: Array<IMessage> = snap.docs.map(val => normalizeMessage(giftedUser)(val.data() as Message))
+//             self.messages.replace(messages)
+//           })
+//       })
+//   }),
+
+//   /**
+//    * Send message to the firebase server
+//    */
+//   sendNewMessage: flow(function * sendNewMessage(chatId: string, message: IMessage, sender: 'kelvin' | 'user') {
+//     // send message
+//     const msgToSvr = normalizeMessageToServer(message, sender, firestore.FieldValue.serverTimestamp())
+
+//     return firestore()
+//       .collection(`chats/${chatId}/messages/`)
+//       .add(msgToSvr)
+//       .then(() => {
+//         console.log('Data added')
+//       })
+//   })
+// }))
 /**
  * The RootStore instance.
  */
