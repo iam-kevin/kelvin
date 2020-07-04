@@ -44,6 +44,7 @@ function VerifyScreen({ route }) {
   const authStore = useAuthStore()
   const [confirm, setConfirm] = useState(null)
   const [code, setCode] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // TODO: bind phone number string with value in store
   const { phoneNumber: userPhoneNumber } = route.params
@@ -55,11 +56,13 @@ function VerifyScreen({ route }) {
   // TODO: verify user using phone number
   //  Update the token via async Storage
   const verifyUser = async () => {
+    setLoading(true)
     if (code.length !== CODE_LENGTH) {
       console.log('Make sure the code length matched first')
+      setLoading(false)
     } else {
       console.log('Verifying')
-      authStore.confirmAndLink(confirm, code)
+      authStore.confirmAndLink(confirm, code).then(() => setLoading(false))
     }
   }
 
@@ -67,7 +70,7 @@ function VerifyScreen({ route }) {
     <IntroContainer
       header={() => (<Header />)}
       footer={() => <Footer onButtonPress={verifyUser} />}
-      visible>
+      progressVisible={loading}>
       <Text style={textStyle}>
         Verify the number {phoneNumber} by entering the verification code sent to the number
       </Text>
