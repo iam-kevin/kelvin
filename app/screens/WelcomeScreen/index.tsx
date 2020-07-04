@@ -1,147 +1,42 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { View, StatusBar, Text as NativeText, StyleSheet } from 'react-native'
 
-import MiniKelvinLogo from '../../assets/svg/MiniLogo'
-import { Button } from "../../components"
-import { color, spacing } from "../../theme"
 import { useNavigation } from '@react-navigation/native'
 
-const VIEW_STYLE = { flex: 1 }
-const COLORED_VIEW_STYLE = { ...VIEW_STYLE, backgroundColor: '#009245' }
+import Button from '../../components/app/button'
+import Text from '../../components/app/texts/Text'
+import Title from '../../components/app/texts/Title'
+import SubTitle from '../../components/app/texts/SubTitle'
+import MiniText from '../../components/app/texts/MiniText'
+import IntroContainer from '../../components/app/container/intro'
 
-const Container = ({ children, style }) => {
-  return (
-    <SafeAreaView style={COLORED_VIEW_STYLE}>
-      <StatusBar barStyle='default' backgroundColor={color.app.statusBar} />
-      <View style={style}>
-        {children}
-      </View>
-    </SafeAreaView>
-  )
-}
+const Header = () => (
+  <>
+    <Title>Introducing Kelvin</Title>
+    <SubTitle>A mobile chat-based agriculture assistant</SubTitle>
+  </>
+)
 
-/**
- * View Styles
- */
-const layoutStyles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    paddingVertical: 50
-    // justifyContent: 'center',
-  },
-
-  footer: {
-    // flex: 0.4
-    paddingHorizontal: 54,
-    width: '100%'
-  },
-
-  info: {
-    ...VIEW_STYLE,
-    alignItems: 'center',
-    // flex: 1,
-  },
-
-  intro: {
-    alignItems: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 54,
-  },
-})
-
-/**
- * Text Styles
- */
-// Color options for the texts
-const BASE_COLOR = { color: '#FFF' }
-const TITLE_COLOR = { color: '#E8FFA6' }
-const textStyles = StyleSheet.create({
-  text: {
-    ...BASE_COLOR,
-    fontFamily: 'DMSans-Regular',
-    textAlign: 'center',
-    paddingVertical: 32,
-  },
-  minitext: {
-    ...TITLE_COLOR,
-    fontFamily: 'DMSans-Regular',
-    fontSize: 12,
-    textAlign: 'center',
-    paddingVertical: 10,
-  },
-  subtitle: {
-    ...TITLE_COLOR,
-    fontFamily: 'DMSans-Regular',
-    fontSize: 12,
-  },
-  title: {
-    ...TITLE_COLOR,
-    fontFamily: 'ProductSans-Regular',
-    fontSize: 20,
-  },
-})
-
-const TEXT = {
-  color: color.palette.black,
-  fontFamily: "DMSans-Regular",
-}
-const BOLD = { fontWeight: "bold" }
-const buttonStyle = StyleSheet.create({
-  shell: {
-    backgroundColor: "#95FF61",
-    borderRadius: 50,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[4],
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  text: {
-    ...TEXT,
-    ...BOLD,
-    fontFamily: "DMSans-Regular",
-    fontSize: 13,
-    letterSpacing: 2,
-  }
-})
-
-const Title = (props) => (<NativeText style={{ ...textStyles.title, ...props.style }} {...props} />)
-const SubTitle = (props) => (<NativeText style={{ ...textStyles.subtitle, ...props.style }} {...props} />)
-const Text = (props) => (<NativeText style={{ ...textStyles.text, ...props.style }} {...props} />)
-const MiniText = (props) => (<NativeText style={{ ...textStyles.minitext, ...props.style }} {...props} />)
+const Footer = ({ onButtonPress }) => (
+  <>
+    <MiniText>By clicking “Continue”, you agree to the terms and conditions.</MiniText>
+    <Button
+      tx="welcomeScreen.continue"
+      onPress={onButtonPress} />
+  </>
+)
 
 export default function WelcomeScreen() {
   const navigation = useNavigation()
   const nextScreen = () => navigation.navigate('register')
 
   return (
-    <Container style={layoutStyles.container}>
-      <View style={layoutStyles.info}>
-        <MiniKelvinLogo />
-        <View style={layoutStyles.intro}>
-          <Title>Introducing Kelvin</Title>
-          <SubTitle>A mobile chat-based agriculture assistant</SubTitle>
-          <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt neque vel libero laoreet, ac dapibus justo facilisis. Vivamus interdum
-          </Text>
-        </View>
-      </View>
-      <View style={layoutStyles.footer}>
-        <MiniText>By clicking “Continue”, you agree to the terms and conditions.</MiniText>
-        <Button
-          style={buttonStyle.shell}
-          textStyle={buttonStyle.text}
-          tx="welcomeScreen.continue"
-          onPress={nextScreen} />
-      </View>
-    </Container>
+    <IntroContainer
+      header={() => <Header />}
+      footer={() => <Footer onButtonPress={nextScreen} />}
+      visible>
+      <Text>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt neque vel libero laoreet, ac dapibus justo facilisis. Vivamus interdum
+      </Text>
+    </IntroContainer>
   )
 }
