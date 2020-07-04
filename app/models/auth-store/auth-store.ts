@@ -61,18 +61,7 @@ export class AuthStore {
    * users/{userId}
    */
   @computed get userId(): string {
-    // If its stored, return it
-    if (this._userId !== null) {
-      // If not, fetch from database
-      database()
-        .ref('users/')
-        .once('value')
-        .then(snap => {
-          this._userId = snap.key
-        })
-    }
-
-    return this._userId
+    return this.user.uid
   }
 
   readyToAuthenticate() {
@@ -114,6 +103,7 @@ export class AuthStore {
       this.readyToAuthenticate()
     } catch (e) {
       console.warn('Unable to confirmAndLink')
+      console.warn(e.message)
     }
   }
 

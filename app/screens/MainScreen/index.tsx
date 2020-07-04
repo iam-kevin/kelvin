@@ -73,6 +73,8 @@ export default function MainScreen() {
   const rootStore = useRootStore()
   const authStore = useAuthStore()
 
+  console.log("userKey", authStore.userId)
+
   const [chatId, setChatId] = useState<string | undefined>(undefined)
   /**
    * Renders messages and addind to state
