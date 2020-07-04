@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, TextInput } from 'react-native'
 import { flatten } from 'ramda'
+import { TextStyles } from '../../texts/styles'
 
 const styles = {
   input: {
@@ -27,7 +28,7 @@ const styles = {
 export default function PhoneNumberField({ wrapperStyle, textInputStyle, ...textInputProps }) {
   return (
     <View style={flatten([styles.input, wrapperStyle])}>
-      <Text>+255</Text>
+      <Text style={TextStyles.text}>+255</Text>
       <TextInput
         style={flatten([styles.textInput, textInputStyle])}
         keyboardType="phone-pad"
