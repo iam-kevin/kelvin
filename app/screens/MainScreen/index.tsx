@@ -74,7 +74,6 @@ export default function MainScreen() {
   const authStore = useAuthStore()
 
   const [chatId, setChatId] = useState<string | undefined>(undefined)
-
   /**
    * Renders messages and addind to state
    * @param newMessages
@@ -89,7 +88,7 @@ export default function MainScreen() {
     // load the messages
     rootStore.loadMessages(authStore.userId, setChatId)
 
-    // add listener to listen to 
+    // add listener to listen to
     // added messages on the messages subcollection
     const onAddMessage = database()
       .ref(`chats/${chatId}/messages/`)

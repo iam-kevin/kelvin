@@ -151,6 +151,7 @@ const CODE_LENGTH = 6
 
 function VerifyScreen({ route }) {
   //
+  const authStore = useAuthStore()
   const [confirm, setConfirm] = useState(null)
   const [code, setCode] = useState('')
 
@@ -158,7 +159,6 @@ function VerifyScreen({ route }) {
   const { phoneNumber: userPhoneNumber } = route.params
   const phoneNumber = `+255${userPhoneNumber}`
 
-  const authStore = useAuthStore()
   // perform code sending
   authStore.signIn(phoneNumber).then((confirm) => setConfirm(confirm))
 

@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:179777115197:android:c98cd4cd4f2bc296244654",
+        "mobilesdk_app_id": "1:179777115197:android:e4de2ca118442269244654",
         "android_client_info": {
           "package_name": "com.io.kelvin.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "179777115197-kia0a32s0ihmuhm94ekkub664co5j9ad.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.io.kelvin.app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "179777115197-h86qj64mfeu3d4p97100iafspuhp8g3o.apps.googleusercontent.com",
           "client_type": 3

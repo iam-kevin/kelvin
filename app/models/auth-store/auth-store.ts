@@ -68,7 +68,7 @@ export class AuthStore {
         .ref('users/')
         .once('value')
         .then(snap => {
-          this._userId = snap.val().id
+          this._userId = snap.key
         })
     }
 
@@ -113,8 +113,7 @@ export class AuthStore {
       // authenticate
       this.readyToAuthenticate()
     } catch (e) {
-      console.error('Unable to confirmAndLink')
-      console.error(e)
+      console.warn('Unable to confirmAndLink')
     }
   }
 
@@ -149,6 +148,7 @@ export class AuthStore {
 
     // use credentials to log user in
     const credentials: FirebaseAuthTypes.AuthCredential = await storage.load(KEY_USER_CREDENTIALS)
+    console.log("Credentials: ", credentials)
 
     // If not credentials, skip thie part
     if (credentials === null) {
@@ -165,6 +165,9 @@ export class AuthStore {
     } catch (e) {
       console.warn('[Main] failed to log you in')
       console.warn(e.message)
+
+      // log user out if login failed
+      this.logOut()
     }
     this.readyToAuthenticate()
   }

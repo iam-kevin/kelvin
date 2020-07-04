@@ -107,11 +107,7 @@ export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange 
     )
   } else {
     return (
-      <RootNavigator
-        ref={navRef}
-        initialState={initialState}
-        onStateChange={onStateChange}
-      />
+      <RootNavigator />
     )
   }
 })

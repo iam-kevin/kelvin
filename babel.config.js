@@ -4,6 +4,7 @@ module.exports = {
     production: {},
   },
   plugins: [
+    "optional-require",
     [
       "@babel/plugin-proposal-decorators",
       {
