@@ -5,4 +5,5 @@
 export const colors = {
   // Color of the status bar for the app
   statusBar: '#007738',
+  theme: '#95FF61'
 }

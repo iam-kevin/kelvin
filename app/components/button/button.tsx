@@ -1,5 +1,5 @@
 import * as React from "react"
-import { TouchableOpacity } from "react-native"
+import { Button as PButton } from 'react-native-paper'
 import { Text } from "../text/text"
 import { viewPresets, textPresets } from "./button.presets"
 import { ButtonProps } from "./button.props"
@@ -30,8 +30,8 @@ export function Button(props: ButtonProps) {
   const content = children || <Text tx={tx} text={text} style={textStyle} />
 
   return (
-    <TouchableOpacity style={viewStyle} {...rest}>
+    <PButton {...rest} style={viewStyle} labelStyle={textStyle}>
       {content}
-    </TouchableOpacity>
+    </PButton>
   )
 }
