@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { StatusBar, View, StyleSheet } from 'react-native'
 import { color } from '../../../../theme'
 import { flatten } from 'ramda'
+import { ProgressBar } from 'react-native-paper'
 
 import MiniKelvinLogo from '../../../../assets/svg/MiniLogo'
 import NotificationBar from '../../notification-bar'
@@ -37,10 +38,11 @@ const layoutStyles = StyleSheet.create({
   },
 })
 
-function WrapperContainer ({ visible, style, children }) {
+function WrapperContainer ({ notificationVisible, progressVisible, style, children }) {
   return (
     <SafeAreaView style={COLORED_VIEW_STYLE}>
-      <NotificationBar visible={visible}/>
+      <ProgressBar visible={progressVisible} color={color.app.theme.accent} indeterminate={true} progress={0.7}/>
+      <NotificationBar visible={notificationVisible}/>
       <StatusBar barStyle='default' backgroundColor={color.app.statusBar} />
       <View style={flatten([style, layoutStyles.container])}>
         {children}
@@ -49,9 +51,12 @@ function WrapperContainer ({ visible, style, children }) {
   )
 }
 
-export default function IntroContainer ({ header, visible, children, footer }) {
+export default function IntroContainer ({ header, notificationVisible, progressVisible, children, footer }) {
   return (
-    <WrapperContainer style={layoutStyles.container} visible={visible}>
+    <WrapperContainer
+      style={layoutStyles.container}
+      notificationVisible={notificationVisible}
+      progressVisible={progressVisible}>
       <View style={layoutStyles.info}>
         <MiniKelvinLogo />
         <View style={layoutStyles.intro}>
