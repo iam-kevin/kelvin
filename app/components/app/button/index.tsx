@@ -1,5 +1,5 @@
 import React from 'react'
-import IgButton from '../../button/button'
+import { Button as IgButton } from '../../../components/button/button'
 import { StyleSheet } from 'react-native'
 import { spacing, color } from '../../../theme'
 
@@ -12,19 +12,21 @@ const BOLD = {
 }
 
 const buttonStyle = StyleSheet.create({
-  shell: {
-    backgroundColor: color.app.theme,
-    borderRadius: 50,
+  contentStyle: {
+    backgroundColor: color.app.theme.accent,
     elevation: 5,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[4],
-    shadowColor: color.palette.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    // paddingHorizontal: spacing[4],
+    // paddingVertical: spacing[4],
+    // shadowColor: color.palette.black,
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+  },
+  outerStyle: {
+    borderRadius: 50
   },
   text: {
     ...TEXT,
@@ -38,9 +40,10 @@ const buttonStyle = StyleSheet.create({
 export default function Button({ tx, ...buttonProps }) {
   return (
     <IgButton
-      {...buttonProps}
-      style={buttonStyle.shell}
+      outerStyle={buttonStyle.outerStyle}
+      style={buttonStyle.contentStyle}
       textStyle={buttonStyle.text}
-      tx={tx} />
+      tx={tx}
+      {...buttonProps} />
   )
 }

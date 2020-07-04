@@ -12,6 +12,8 @@ export interface ButtonProps extends TouchableOpacityProps {
    */
   text?: string
 
+  outerStyle?: ViewStyle | ViewStyle[]
+
   /**
    * An optional style override useful for padding & margin.
    */

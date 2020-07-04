@@ -16,6 +16,7 @@ export function Button(props: ButtonProps) {
     preset = "primary",
     tx,
     text,
+    outerStyle,
     style: styleOverride,
     textStyle: textStyleOverride,
     children,
@@ -30,7 +31,7 @@ export function Button(props: ButtonProps) {
   const content = children || <Text tx={tx} text={text} style={textStyle} />
 
   return (
-    <PButton {...rest} style={viewStyle} labelStyle={textStyle}>
+    <PButton {...rest} mode="contained" style={outerStyle} contentStyle={viewStyle} labelStyle={textStyle}>
       {content}
     </PButton>
   )
