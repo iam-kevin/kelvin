@@ -29,7 +29,7 @@ const Header = () => (
 const Footer = ({ onButtonPress }) => (
   <>
     <Button
-      tx="welcomeScreen.verifyButton"
+      tx="welcome.verifyButton"
       onPress={onButtonPress} />
   </>
 )
