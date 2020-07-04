@@ -56,7 +56,7 @@ export default function IntroContainer ({ header, notificationVisible, progressV
     <WrapperContainer
       style={layoutStyles.container}
       notificationVisible={notificationVisible}
-      progressVisible={progressVisible !== undefined}>
+      progressVisible={progressVisible !== undefined && progressVisible}>
       <View style={layoutStyles.info}>
         <MiniKelvinLogo />
         <View style={layoutStyles.intro}>
