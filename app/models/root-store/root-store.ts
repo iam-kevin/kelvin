@@ -1,50 +1,12 @@
 import { Instance, types, flow } from "mobx-state-tree"
-import { IMessage } from "react-native-gifted-chat"
+import { IMessage, User } from "react-native-gifted-chat"
 
 import database from '@react-native-firebase/database'
-import { Message } from "../../typings"
 import { normalizeMessage, buildGiftedUserObj, normalizeMessageToServer } from "../../utils/message"
 import { firebase } from "@react-native-firebase/auth"
 
-export interface Reply {
-  title: string;
-  value: string;
-  messageId?: any;
-}
-export interface QuickReplies {
-  type: 'radio' | 'checkbox';
-  values: Reply[];
-  keepIt?: boolean;
-}
-
-/**
- * Custom chat object for
- * mobx-state-tree store
- */
-const ChatMessage = types.custom<string, IMessage>({
-  name: "ChatMessage",
-  fromSnapshot(value: string): IMessage {
-    return JSON.parse(value) as IMessage
-  },
-  toSnapshot(value: IMessage): string {
-    return JSON.stringify(value)
-  },
-  isTargetType(value: IMessage | string) {
-    return !(typeof value === 'string')
-  },
-  getValidationMessage(value: string): string {
-    let message: IMessage
-
-    try {
-      message = JSON.parse(value)
-    } catch (e) {
-      return `Unable to parse message: ${value}`
-    }
-
-    if (message.text !== undefined && message.createdAt !== undefined && message.user !== undefined) return ""
-    return `Doesn't seem that the object is a IMessage\n${value}`
-  }
-})
+import { ChatMessageModel, ChatMessage } from './chat-model'
+import { Message } from "../../typings"
 
 /**
  * A RootStore model.
@@ -52,19 +14,35 @@ const ChatMessage = types.custom<string, IMessage>({
 // prettier-ignore
 export const RootStoreModel = types.model("RootStore")
   .props({
-    messages: types.array(ChatMessage),
+    messages: types.array(ChatMessageModel),
   })
   .actions(self => ({
+    updateMessage: (messages: ChatMessage[]) => {
+      self.messages.replace(messages)
+    },
     // ----------------------
     // UI-related updates
     // ----------------------
     /**
      * Sending the message
      */
-    updateUIMessage: (addMessageCallback: (previousMessage: IMessage[]) => IMessage[]) => {
+    updateUIMessage: (addMessageCallback: (previousMessage: ChatMessage[]) => ChatMessage[]) => {
       // update the message
       self.messages.replace(addMessageCallback(self.messages))
     },
+  }))
+  .views(self => ({
+    getRenderFormatMessages: (messages: Message | Message[], giftedUser: User): ChatMessage[] => {
+      let toRenderMessages = Array.isArray(messages) ? messages : [messages]
+
+      // @ts-ignore
+      toRenderMessages = toRenderMessages.map(normalizeMessage(giftedUser))
+      // // @ts-ignore
+      // toRenderMessages = toRenderMessages.map(ChatMessageModel.create)
+
+      // @ts-ignore
+      return toRenderMessages
+    }
   }))
   .actions(self => ({
     // ----------------------
@@ -88,11 +66,11 @@ export const RootStoreModel = types.model("RootStore")
             .ref(`chats/${chatId}/messages`)
             .once('value')
             .then(snap => {
-              // load all the images
-              const messages: Array<Message> = snap.val()
-
               const giftedUser = buildGiftedUserObj(userId)
-              self.messages.replace(messages.map(normalizeMessage(giftedUser)))
+              // load all the images
+              const messages = snap.val()
+
+              self.updateMessage(self.getRenderFormatMessages(messages, giftedUser))
             })
         })
     }),
@@ -114,52 +92,6 @@ export const RootStoreModel = types.model("RootStore")
       newMsgRef.set(msgToSvr).then(() => console.log('Data added'))
     })
   }))
-
-//   /**
-//    * Load the messages from the database
-//    */
-//   loadMessages: flow(function * loadMessages(userId: string, chatAction: React.Dispatch<React.SetStateAction<string>>) {
-//     // Initial message loading
-//     return firestore()
-//       .collection(`users`)
-//       .doc(userId)
-//       .get()
-//       .then(snap => {
-//         // check to obtain the chatId value
-//         const chatId: string = snap.get('chatId')
-//         chatAction(chatId)
-
-//         // load all messages from values
-//         firestore()
-//           .doc(`chats/${chatId}`)
-//           .collection(`messages`)
-//           .get()
-//           .then(snap => {
-//             // load all the images
-//             const giftedUser = buildGiftedUserObj(userId)
-
-//             // render messages to the screen
-//             const messages: Array<IMessage> = snap.docs.map(val => normalizeMessage(giftedUser)(val.data() as Message))
-//             self.messages.replace(messages)
-//           })
-//       })
-//   }),
-
-//   /**
-//    * Send message to the firebase server
-//    */
-//   sendNewMessage: flow(function * sendNewMessage(chatId: string, message: IMessage, sender: 'kelvin' | 'user') {
-//     // send message
-//     const msgToSvr = normalizeMessageToServer(message, sender, firestore.FieldValue.serverTimestamp())
-
-//     return firestore()
-//       .collection(`chats/${chatId}/messages/`)
-//       .add(msgToSvr)
-//       .then(() => {
-//         console.log('Data added')
-//       })
-//   })
-// }))
 /**
  * The RootStore instance.
  */

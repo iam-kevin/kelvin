@@ -21,11 +21,32 @@ export const buildGiftedUserObj = (userId: string, name?: string): GiftedUser =>
  */
 export const normalizeMessage = (user: GiftedUser) => (message: Message): IMessage => {
   // extracting the properties that dont match with IMessage
-  const { isUser, ...otherProps } = message
+  const messageId = Object.keys(message)[0]
+  const { isUser, createdAt, ...otherProps } = message[messageId]
 
   const userObj = isUser ? user : { _id: DEFAULT_RENDER_KELVIN_ID } as GiftedUser
 
-  return { ...otherProps, user: userObj } as IMessage
+  return {
+    ...otherProps,
+    createdAt: new Date(createdAt),
+    isUser,
+    system: otherProps.system === undefined ? false : otherProps.system,
+    user: userObj,
+    _id: messageId
+  } as IMessage
+}
+
+/**
+ * Normalize message for rendering
+ */
+export const normalizeMessageFromUser = (user: GiftedUser) => (message: Message): IMessage => {
+  // extracting the properties that dont match with IMessage
+  const messageId = Object.keys(message)[0]
+  const { isUser, ...otherProps } = message[messageId]
+
+  const userObj = isUser ? user : { _id: DEFAULT_RENDER_KELVIN_ID } as GiftedUser
+
+  return { ...otherProps, user: userObj, _id: messageId } as IMessage
 }
 
 export const normalizeMessageToServer = (message: IMessage, sender: 'kelvin' | 'user', createAtTimestamp): Message => {

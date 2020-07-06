@@ -60,10 +60,11 @@ function WrapperContainer ({ children }) {
   )
 }
 
-export default function MainContainer () {
+export default function MainContainer ({ children }) {
   return (
     <WrapperContainer>
       <AppHeader />
+      {children}
     </WrapperContainer>
   )
 }

@@ -12,7 +12,7 @@
 import "./i18n"
 import "./utils/ignore-warnings"
 import "mobx-react-lite/batchingForReactNative"
-import React, { useState, useEffect, useRef, Component } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
 import { observer } from 'mobx-react'
 // import 'mobx-react-lite'
