@@ -37,6 +37,8 @@ import { RootStore, RootStoreProvider, setupRootStore,
 import { enableScreens } from 'react-native-screens'
 import SplashScreen from 'react-native-splash-screen'
 
+import { Provider as PaperThemeProvider } from 'react-native-paper'
+
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
@@ -76,17 +78,19 @@ const App = () => {
     <SafeAreaProvider initialSafeAreaInsets={initialWindowSafeAreaInsets}>
       <AuthStoreProvider value={new AuthStore()}>
         <RootStoreProvider value={rootStore}>
-          <AuthenticatedApp
-            navRef={navigationRef}
-            initialState={initialNavigationState}
-            onStateChange={onNavigationStateChange} />
+          <PaperThemeProvider>
+            <AuthenticatedApp
+              navRef={navigationRef}
+              initialState={initialNavigationState}
+              onStateChange={onNavigationStateChange} />
+          </PaperThemeProvider>
         </RootStoreProvider>
       </AuthStoreProvider>
     </SafeAreaProvider>
   )
 }
 
-export const AuthenticatedApp = observer(({ navRef, initialState, onStateChange }) => {
+const AuthenticatedApp = observer(({ navRef, initialState, onStateChange }) => {
   const authStore = useAuthStore()
 
   // Dont render anything if authentication isn't done

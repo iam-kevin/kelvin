@@ -2,13 +2,14 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { View, StatusBar, StyleSheet, Text } from 'react-native'
 import { color } from '../../../../theme'
-
+import { TouchableRipple } from 'react-native-paper'
 import HeaderLogo from '../../../../assets/svg/AltMiniHeaderLogo'
 
-export const VIEW_STYLE = { flex: 1 }
+export const VIEW_STYLE = { flex: 1, backgroundColor: color.palette.white }
 
 const layoutStyles = StyleSheet.create({
   appHeader: {
+    backgroundColor: color.palette.white,
     // flex: 1,
     height: 80,
     justifyContent: "center",
@@ -21,6 +22,7 @@ const layoutStyles = StyleSheet.create({
     // backgroundColor: '#555',
     flexDirection: 'row',
     alignItems: "center",
+    borderRadius: 30,
   }
 })
 
@@ -32,14 +34,25 @@ const textStyle = StyleSheet.create({
   }
 })
 
-const AppHeader = () => {
+const AppHeader = ({ onLogoPress }) => {
   return (
     <View style={layoutStyles.appHeader}>
       {/* left section */}
       <View style={layoutStyles.leftHeader}>
-        <View>
+        <TouchableRipple
+          borderless
+          centered
+          onPress={onLogoPress}
+          rippleColor="rgba(0, 0, 0, .32)"
+          style={{
+            padding: 7,
+            width: 50,
+            height: 50,
+            // borderWidth: 1,
+            borderRadius: 26
+          }}>
           <HeaderLogo />
-        </View>
+        </TouchableRipple>
         <Text style={textStyle.headerTitle}>KELVIN</Text>
       </View>
 
@@ -60,10 +73,10 @@ function WrapperContainer ({ children }) {
   )
 }
 
-export default function MainContainer ({ children }) {
+export default function MainContainer ({ children, onLogoPress }) {
   return (
     <WrapperContainer>
-      <AppHeader />
+      <AppHeader onLogoPress={onLogoPress} />
       {children}
     </WrapperContainer>
   )

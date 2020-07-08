@@ -1,9 +1,8 @@
-import { Instance, types, flow } from "mobx-state-tree"
+import { Instance, types, flow, cast } from "mobx-state-tree"
 import { IMessage, User } from "react-native-gifted-chat"
 
 import database from '@react-native-firebase/database'
-import { normalizeMessage, buildGiftedUserObj, normalizeMessageToServer } from "../../utils/message"
-import { firebase } from "@react-native-firebase/auth"
+import { normalizeMessage, normalizeMessageFromUser, buildGiftedUserObj, normalizeMessageToServer } from "../../utils/message"
 
 import { ChatMessageModel, ChatMessage } from './chat-model'
 import { Message } from "../../typings"
@@ -32,16 +31,32 @@ export const RootStoreModel = types.model("RootStore")
     },
   }))
   .views(self => ({
+    getMessages: () => {
+      return self.messages
+    },
     getRenderFormatMessages: (messages: Message | Message[], giftedUser: User): ChatMessage[] => {
-      let toRenderMessages = Array.isArray(messages) ? messages : [messages]
-
       // @ts-ignore
-      toRenderMessages = toRenderMessages.map(normalizeMessage(giftedUser))
-      // // @ts-ignore
-      // toRenderMessages = toRenderMessages.map(ChatMessageModel.create)
+      /**
+       * { "dasda": {
+       *    text: "asdasdasds",
+       *    createdAt: "sdadsad"
+       * },
+       * "sadad": {
+       *    text: "asdasdasds",
+       *    createdAt: "sdadsad"
+       * }}
+       */
+      const msgs = Object.keys(messages).map(key => {
+        const msg = {}
+        msg[key] = messages[key]
 
+        const out = normalizeMessageFromUser(giftedUser)(msg)
+        return out
+      })
+
+      // console.warn(msgs)
       // @ts-ignore
-      return toRenderMessages
+      return msgs
     }
   }))
   .actions(self => ({
@@ -57,21 +72,24 @@ export const RootStoreModel = types.model("RootStore")
         .ref(`users/${userId}`)
         .once('value')
         .then(snap => {
-          // check to obtain the chatId value
-          const chatId: string = snap.val().chatId
-          chatAction(chatId)
+          if (snap.exists()) {
+            // check to obtain the chatId value
+            const chatId: string = snap.val().chatId
+            chatAction(chatId)
 
-          // load all messages from values
-          database()
-            .ref(`chats/${chatId}/messages`)
-            .once('value')
-            .then(snap => {
-              const giftedUser = buildGiftedUserObj(userId)
-              // load all the images
-              const messages = snap.val()
+            // load all messages from values
+            database()
+              .ref(`chats/${chatId}/messages`)
+              .once('value')
+              .then(snap => {
+                const giftedUser = buildGiftedUserObj(userId)
+                // load all the images
+                const messages = snap.val()
+                // console.warn(messages)
 
-              self.updateMessage(self.getRenderFormatMessages(messages, giftedUser))
-            })
+                self.updateMessage(self.getRenderFormatMessages(messages, giftedUser))
+              })
+          }
         })
     }),
 
@@ -84,12 +102,12 @@ export const RootStoreModel = types.model("RootStore")
         .ref(`chats/${chatId}/messages/`)
         .push()
 
-      // generate key
-      console.log('Generated key', newMsgRef.key)
-
       // Send data to server
-      const msgToSvr = normalizeMessageToServer(message, sender, firebase.database().getServerTime())
+      const msgToSvr = normalizeMessageToServer(message, sender, database().getServerTime())
       newMsgRef.set(msgToSvr).then(() => console.log('Data added'))
+
+      // const giftedUser = buildGiftedUserObj(userId)
+      return message
     })
   }))
 /**

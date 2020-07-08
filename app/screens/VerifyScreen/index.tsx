@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuthStore } from '../../models'
 
 import { color } from '../../theme'
@@ -50,11 +50,13 @@ function VerifyScreen({ route }) {
   const { phoneNumber: userPhoneNumber } = route.params
   const phoneNumber = `+255${userPhoneNumber}`
 
-  // perform code sending
-  authStore.signIn(phoneNumber).then((confirm) => setConfirm(confirm))
+  useEffect(() => {
+    // perform code sending
+    authStore.signIn(phoneNumber).then((confirm) => setConfirm(confirm))
+  })
 
   // TODO: verify user using phone number
-  //  Update the token via async Storage
+  //  Update the tokensla via async Storage
   const verifyUser = async () => {
     setLoading(true)
     if (code.length !== CODE_LENGTH) {

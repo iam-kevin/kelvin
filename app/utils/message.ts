@@ -55,7 +55,7 @@ export const normalizeMessageToServer = (message: IMessage, sender: 'kelvin' | '
   return {
     text,
     image,
-    system,
+    system: system !== undefined && system,
     isUser: sender === 'user',
     createdAt: createAtTimestamp
   } as Message

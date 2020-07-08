@@ -120,7 +120,7 @@ export class AuthStore {
     console.log('Token:', this.token)
   }
 
-  @action private deleteLoginInfo() {
+  @action deleteLoginInfo() {
     this.token = null
     storage.clear()
   }
