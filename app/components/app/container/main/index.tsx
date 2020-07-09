@@ -11,7 +11,7 @@ const layoutStyles = StyleSheet.create({
   appHeader: {
     backgroundColor: color.palette.white,
     // flex: 1,
-    height: 80,
+    height: 70,
     justifyContent: "center",
     // backgroundColor: '#777',
     paddingHorizontal: 27,
@@ -41,13 +41,13 @@ const AppHeader = ({ onLogoPress }) => {
       <View style={layoutStyles.leftHeader}>
         <TouchableRipple
           borderless
-          centered
           onPress={onLogoPress}
           rippleColor="rgba(0, 0, 0, .32)"
           style={{
-            padding: 7,
-            width: 50,
-            height: 50,
+            width: 42,
+            height: 42,
+            alignItems: 'center',
+            justifyContent: 'center',
             // borderWidth: 1,
             borderRadius: 26
           }}>

@@ -20,13 +20,17 @@ const fontStyles = StyleSheet.create({
 })
 
 const styles = StyleSheet.create({
+  actionStyle: {
+    alignSelf: 'center',
+    borderRadius: 50,
+    padding: 10,
+  },
   container: {
     alignItems: 'center',
     height: 50,
     justifyContent: 'center',
     width: 50,
   },
-  actionStyle: { alignSelf: 'center', padding: 10, borderRadius: 50 },
   messageTextStyle: {
     paddingHorizontal: 3,
     paddingVertical: 5,
@@ -108,7 +112,7 @@ export const renderAvatar = null
 export const placeholder = "Unataka kufahamu nini?"
 export const renderSend = props => (<Send {...props} />)
 export const renderActions = props => (<UploadActions {...props} />)
-export const textInputProps={
+export const textInputProps = {
   fontFamily: 'DMSans-Regular',
   fontSize: 18,
   alignItems: 'center',

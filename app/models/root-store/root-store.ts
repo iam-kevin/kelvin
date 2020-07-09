@@ -17,7 +17,7 @@ export const RootStoreModel = types.model("RootStore")
   })
   .actions(self => ({
     updateMessage: (messages: ChatMessage[]) => {
-      self.messages.replace(messages)
+      self.messages = messages
     },
     // ----------------------
     // UI-related updates
@@ -27,14 +27,14 @@ export const RootStoreModel = types.model("RootStore")
      */
     updateUIMessage: (addMessageCallback: (previousMessage: ChatMessage[]) => ChatMessage[]) => {
       // update the message
-      self.messages.replace(addMessageCallback(self.messages))
+      self.messages = addMessageCallback(self.messages)
     },
   }))
   .views(self => ({
     getMessages: () => {
       return self.messages
     },
-    getRenderFormatMessages: (messages: Message | Message[], giftedUser: User): ChatMessage[] => {
+    getRenderFormatMessages: (messages: Message | Message[] | null, giftedUser: User): ChatMessage[] => {
       // @ts-ignore
       /**
        * { "dasda": {
@@ -46,6 +46,8 @@ export const RootStoreModel = types.model("RootStore")
        *    createdAt: "sdadsad"
        * }}
        */
+      if (messages === null) return []
+
       const msgs = Object.keys(messages).map(key => {
         const msg = {}
         msg[key] = messages[key]

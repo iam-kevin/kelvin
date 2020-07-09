@@ -1,105 +1,93 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
-import ChatArea from './chat-area'
-import { GiftedChat, IMessage } from 'react-native-gifted-chat'
-
-import { useRootStore, useAuthStore } from '../../models'
-import { Message } from "../../typings"
-import database from '@react-native-firebase/database'
-import { normalizeMessage, buildGiftedUserObj } from '../../utils/message'
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react'
 import MainContainer from '../../components/app/container/main'
-import { ChatMessage, ChatMessageModel } from '../../models/root-store/chat-model'
-import { types } from 'mobx-state-tree'
+import ChatArea from './chat-area'
+import { IMessage, GiftedChat } from 'react-native-gifted-chat'
+import database from '@react-native-firebase/database'
+import { useAuthStore } from '../../models'
 
-export default function MainScreen() {
-  // const rootStore = useStores()
-  // @ts-ignore
-  const rootStore = useRootStore()
+const KELVIN_BOT_ID = 1
+
+export default function Main() {
+  const [messages, setMessages] = useState<IMessage[]>([])
+  const [chatId, setChatId] = useState<string>(undefined)
   const authStore = useAuthStore()
 
-  const [chatId, setChatId] = useState<string | undefined>(undefined)
-  const [loading, setLoading] = useState<boolean>(false)
+  // const chatId = '-MBjcSrqsuMyQcL7fQxe'
+  const onSend = (message = []) => {
+    console.log('Sending message', message)
 
-  /**
-   * Renders messages and addind to state
-   * @param newMessages
-   */
-  const renderMessages = (newMessages: ChatMessage[]) => {
-    // @ts-ignore
-    let newMsg = Array.isArray(newMessages) ? newMessages : [newMessages]
-    newMsg = rootStore.getMessages().concat(newMsg)
+    // firebase.database().ref().child('posts').push().key
+    database()
+      .ref(`chats/${chatId}/messages`)
+      .push().once('value', snap => {
+        const { _id, ...others } = message[0]
 
-    console.log("RNDNEWMESSAGE: ", newMsg)
-    // console.log("LG_OUTPUT:", withNewMessages)
-
-    // @ts-ignore
-    const out = types.array(ChatMessageModel).create(newMsg)
-
-    console.log("OUTPUT:", out)
-
-    rootStore.updateMessage(newMsg)
-  }
-
-  useLayoutEffect(() => {
-    // load the messages
-    rootStore.loadMessages(authStore.userId, setChatId).then(() => setLoading(true))
-
-    console.log(rootStore.messages)
-
-    // add listener to listen to
-    // added messages on the messages subcollection
-    const onAddMessage = database()
-      .ref(`chats/${chatId}/messages/`)
-      .on('child_added', snap => {
-        const gUser = buildGiftedUserObj(authStore.userId)
-        const messageData: Partial<Message> = {}
-        messageData[snap.ref.key] = snap.val()
-
-        console.log(messageData)
-
-        // @ts-ignore
-        const toRenderMessages = rootStore.getRenderFormatMessages(messageData, gUser)
-
-        console.log("NEW LISTENED MESSAGE: ", toRenderMessages)
-
-        // rootStore.renderMessages(toRenderMessages)
-        // // const x = ChatMessageModel.create(toRenderMessages[0])
-        // // console.log(toRenderMessages[0])
-        // // render messages to the screen
-        renderMessages(toRenderMessages)
+        snap.ref.set({
+          ...others,
+          createdAt: database.ServerValue.TIMESTAMP
+        })
       })
 
-    // // remove the listener
-    return () => database()
-      .ref(`chats/${chatId}/messages/`)
-      .off('child_added', onAddMessage)
+    setMessages(prevMessage => GiftedChat.append(prevMessage, message))
+  }
+
+  useEffect(() => {
+    // Load the chat Session bound to the user
+    database().ref(`users/${authStore.userId}`)
+      .once('value', snap => {
+        setChatId(snap.val().chatId)
+      })
   }, [])
 
-  /**
-   * Action when the message is sent
-   * Controls how to rende the message to the screen
-   */
-  const onSend = (newMessages: IMessage[] = []) => {
-    console.warn("MSG ", newMessages)
-    // updates the message render
-    rootStore.sendNewMessage(chatId, newMessages[0], 'user').then(message => {
-      // @ts-ignore
-      // console.log("NEW SENT MESSAGE: ", message)
-      // const msg = ChatMessageModel.create({...message, system: false, user: { _id: authStore.userId } })
-      // rootStore.updateMessage(msg)
-    }) // .then()
-  }
+  useLayoutEffect(() => {
+    database().ref(`chats/${chatId}/messages`)
+      .once('value', snap => {
+        if (snap.exists()) {
+          console.log('Initial Load:', snap.val())
+          const retrMessage = snap.val()
 
-  if (loading) {
-    console.log('Loaded', rootStore.getMessages())
+          // FIXME: Watchout for the last message
+          const messages = Object.keys(snap.val()).reverse().slice(0, Object.keys(snap.val()).length).map((key) => {
+            const { createdAt, ...rest } = retrMessage[key]
 
-    return (
-      <MainContainer onLogoPress={() => authStore.logOut()}>
-        <ChatArea
-          onSend={onSend}
-          messages={rootStore.getMessages()}/>
-      </MainContainer>
-    )
-  } else {
-    return null
-  }
+            return {
+              ...rest,
+              _id: key,
+              user: rest.user === undefined ? {} : { _id: KELVIN_BOT_ID, name: "Kelvin" },
+              createdAt: new Date(createdAt),
+            }
+          })
+
+          setMessages(messages.reverse())
+        }
+      })
+
+    // database().ref(`chats/${chatId}/messages`).limitToLast(1)
+    //   .on('child_added', (snap) => {
+    //     console.log('FROM DATABASE (SNAP.VAL):', snap.val())
+    //     const { createdAt, ...rest } = snap.val()
+
+    //     const message = {
+    //       ...rest,
+    //       _id: snap.ref.key,
+    //       user: rest.user === undefined ? {} : { _id: KELVIN_BOT_ID, name: "Kelvin" },
+    //       createdAt: new Date(createdAt),
+    //     }
+    //     setMessages(prevMessage => GiftedChat.append(prevMessage, message))
+    //   })
+
+    // return database().ref(`chats/${chatId}/messages`)
+    //   .off('child_added', AddValueListener)
+    // return subscribe
+  }, [chatId])
+
+  return (
+    <MainContainer onLogoPress={() => authStore.logOut()}>
+      <ChatArea
+        onSend={onSend}
+        messages={messages}
+        // inverted={false}
+      />
+    </MainContainer>
+  )
 }
