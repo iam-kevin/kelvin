@@ -5,15 +5,19 @@ import { IMessage, GiftedChat } from 'react-native-gifted-chat'
 import database from '@react-native-firebase/database'
 import { useAuthStore } from '../../models'
 
+import { v4 as uuidv4 } from 'uuid'
+
 const KELVIN_BOT_ID = 1
 
 export default function Main() {
   const [messages, setMessages] = useState<IMessage[]>([])
   const [chatId, setChatId] = useState<string>(undefined)
+  const [canLoadData, setCanLoadData] = useState(false)
+
   const authStore = useAuthStore()
 
   // const chatId = '-MBjcSrqsuMyQcL7fQxe'
-  const onSend = (message = []) => {
+  const onSend = async (message = []) => {
     console.log('Sending message', message)
 
     // firebase.database().ref().child('posts').push().key
@@ -62,29 +66,42 @@ export default function Main() {
         }
       })
 
-    // database().ref(`chats/${chatId}/messages`).limitToLast(1)
-    //   .on('child_added', (snap) => {
-    //     console.log('FROM DATABASE (SNAP.VAL):', snap.val())
-    //     const { createdAt, ...rest } = snap.val()
+    database().ref(`chats/${chatId}/messages`).limitToLast(1)
+      .on('child_added', (snap) => {
+        if (canLoadData === false) {
+          setCanLoadData(true)
+          console.log('Setting data')
+          return ;
+        }
 
-    //     const message = {
-    //       ...rest,
-    //       _id: snap.ref.key,
-    //       user: rest.user === undefined ? {} : { _id: KELVIN_BOT_ID, name: "Kelvin" },
-    //       createdAt: new Date(createdAt),
-    //     }
-    //     setMessages(prevMessage => GiftedChat.append(prevMessage, message))
-    //   })
+        console.log('FROM DATABASE (SNAP.VAL):', snap.val())
+        const { createdAt, ...rest } = snap.val()
 
-    // return database().ref(`chats/${chatId}/messages`)
-    //   .off('child_added', AddValueListener)
+        const message = {
+          ...rest,
+          _id: snap.ref.key,
+          user: rest.user === undefined ? {} : { _id: KELVIN_BOT_ID, name: "Kelvin" },
+          createdAt: new Date(createdAt),
+        }
+        setMessages(prevMessage => GiftedChat.append(prevMessage, message))
+      })
+
+    // return database().ref(`chats/${chatId}/messages`).off()
     // return subscribe
   }, [chatId])
 
   return (
     <MainContainer onLogoPress={() => authStore.logOut()}>
       <ChatArea
-        onSend={onSend}
+        onSend={() => onSend().then(() => {
+          // Adding a message after sending
+          setMessages(prevMessage => GiftedChat.append(prevMessage, [{
+            _id: uuidv4(),
+            text: "This was the response",
+            createdAt: new Date(),
+            user: { _id: KELVIN_BOT_ID, name: 'Kelvin'}
+          }]))
+        })}
         messages={messages}
         // inverted={false}
       />
