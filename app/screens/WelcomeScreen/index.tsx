@@ -11,7 +11,7 @@ import IntroContainer from '../../components/app/container/intro'
 
 const Header = () => (
   <>
-    <Title>Introducing Kelvin</Title>
+    <Title>Introducing AgroChat</Title>
     <SubTitle>A mobile chat-based agriculture assistant</SubTitle>
   </>
 )

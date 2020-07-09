@@ -53,7 +53,7 @@ const AppHeader = ({ onLogoPress }) => {
           }}>
           <HeaderLogo />
         </TouchableRipple>
-        <Text style={textStyle.headerTitle}>KELVIN</Text>
+        <Text style={textStyle.headerTitle}>AgroChat</Text>
       </View>
 
       {/* right section */}
