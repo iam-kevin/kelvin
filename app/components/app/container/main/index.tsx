@@ -4,25 +4,32 @@ import { View, StatusBar, StyleSheet, Text } from 'react-native'
 import { color } from '../../../../theme'
 import { TouchableRipple } from 'react-native-paper'
 import HeaderLogo from '../../../../assets/svg/AltMiniHeaderLogo'
+import { Status } from '../../../..'
 
 export const VIEW_STYLE = { flex: 1, backgroundColor: color.palette.white }
 
 const layoutStyles = StyleSheet.create({
   appHeader: {
-    backgroundColor: color.palette.white,
+    // backgroundColor: color.palette.white,
     // flex: 1,
     height: 70,
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: "space-between",
+    alignItems: "center",
     // backgroundColor: '#777',
     paddingHorizontal: 27,
     width: '100%',
   },
   leftHeader: {
-    flex: 1,
+    // flex: 0.8,
     // backgroundColor: '#555',
     flexDirection: 'row',
     alignItems: "center",
     borderRadius: 30,
+  },
+  rightHeader: {
+    flexBasis: 0.2,
+    alignItems: "center",
   }
 })
 
@@ -33,8 +40,15 @@ const textStyle = StyleSheet.create({
     marginHorizontal: 24
   }
 })
+const StatusCircle = (props: { status: Status }) => (
+  <View style={{
+    padding: 7,
+    backgroundColor: color.app.status[props.status],
+    borderRadius: 10
+  }}/>
+)
 
-const AppHeader = ({ onLogoPress }) => {
+const AppHeader = ({ onLogoPress, status }) => {
   return (
     <View style={layoutStyles.appHeader}>
       {/* left section */}
@@ -57,7 +71,9 @@ const AppHeader = ({ onLogoPress }) => {
       </View>
 
       {/* right section */}
-      <View></View>
+      <View style={layoutStyles.rightHeader}>
+        <StatusCircle status={status} />
+      </View>
     </View>
   )
 }
@@ -73,10 +89,10 @@ function WrapperContainer ({ children }) {
   )
 }
 
-export default function MainContainer ({ children, onLogoPress }) {
+export default function MainContainer ({ children, onLogoPress, status }) {
   return (
     <WrapperContainer>
-      <AppHeader onLogoPress={onLogoPress} />
+      <AppHeader onLogoPress={onLogoPress} status={status} />
       {children}
     </WrapperContainer>
   )

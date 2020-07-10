@@ -9,5 +9,10 @@ export const colors = {
     primary: '#009245',
     accent: '#95FF61',
     yellow: '#8AFF9D'
+  },
+  status: {
+    online: '#10e871',
+    connecting: '#ffcb59',
+    offline: '#f0434c',
   }
 }
