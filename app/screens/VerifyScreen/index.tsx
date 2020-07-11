@@ -53,7 +53,7 @@ function VerifyScreen({ route }) {
   useEffect(() => {
     // perform code sending
     authStore.signIn(phoneNumber).then((confirm) => setConfirm(confirm))
-  })
+  }, [])
 
   // TODO: verify user using phone number
   //  Update the tokensla via async Storage
