@@ -70,7 +70,7 @@ export default function Main() {
   }, setStatus, setChatId)
 
   // const chatId = '-MBjcSrqsuMyQcL7fQxe'
-  
+
   const onSend = async (message = []) => {
     const { _id, user, ...rest } = Array.isArray(message) ? message[0] : message
     const properMessage = {
@@ -107,9 +107,11 @@ export default function Main() {
             })
 
             setMessages(messages.reverse())
-            console.log(messages)
+            // console.log(messages)
           }
         })
+    } else {
+      console.log("Nothing here")
     }
   // @ts-ignore
   }, [chatId])

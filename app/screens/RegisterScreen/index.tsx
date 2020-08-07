@@ -15,7 +15,7 @@ const Header = () => (
     <Title>You are new here</Title>
     <SubTitle>Register your phone number</SubTitle>
     <Text>
-      Enter the phone number you would like to register for Kelvin.
+      Enter the phone number you would like to register for AgroChat.
     </Text>
   </>
 )
