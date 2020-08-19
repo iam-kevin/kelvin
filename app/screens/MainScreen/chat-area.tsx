@@ -90,11 +90,6 @@ const ChatArea: Component<GiftedChatProps> = ({ messages, onSend, ...GiftedChatP
     } else if (response.customButton) {
       console.log('User tapped custom button: ', response.customButton)
     } else {
-      // const source = { uri: response.uri }
-      // You can also display the image using data:
-      // const source: ImageSource = { uri: 'data:image/jpeg;base64,' + response.data }
-      // setImageSource(response)
-
       // Struct for image
       const imageMessage = {
         _id: uuidv1(),
@@ -119,13 +114,13 @@ const ChatArea: Component<GiftedChatProps> = ({ messages, onSend, ...GiftedChatP
 
               // For taking a photo
               onTakePhoto={() => {
-                console.log('Taking a photo. Click!')
+                setVisible(false)
                 ImagePicker.launchCamera(options, imageResponseLogic)
               }}
 
               // For uploading from gallery
               onUploadFromGallery={() => {
-                console.log('Requesting permission to upload from gallery')
+                setVisible(false)
                 ImagePicker.launchImageLibrary(options, imageResponseLogic)
               }}>
               <IconButton
