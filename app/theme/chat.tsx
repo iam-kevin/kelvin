@@ -7,8 +7,7 @@ import {
   SystemMessage,
   InputToolbar } from 'react-native-gifted-chat'
 import SendIcon from '../assets/svg/SendIcon'
-import UploadImageIcon from '../assets/svg/UploadImageIcon'
-  
+
 /**
  * Setting custom styles for the caht
  */
@@ -20,11 +19,6 @@ const fontStyles = StyleSheet.create({
 })
 
 const styles = StyleSheet.create({
-  actionStyle: {
-    alignSelf: 'center',
-    borderRadius: 50,
-    padding: 10,
-  },
   container: {
     alignItems: 'center',
     height: 50,
@@ -37,14 +31,6 @@ const styles = StyleSheet.create({
     ...fontStyles.base
   }
 })
-
-const UploadActions = props => {
-  return (
-    <View style={styles.actionStyle}>
-      <UploadImageIcon />
-    </View>
-  )
-}
 
 // custom send
 const Send = props => {
@@ -111,18 +97,20 @@ export const renderAvatar = null
 // responsible for chat input field
 export const placeholder = "Unataka kufahamu nini?"
 export const renderSend = props => (<Send {...props} />)
-export const renderActions = props => (<UploadActions {...props} />)
 export const textInputProps = {
   fontFamily: 'DMSans-Regular',
   fontSize: 18,
   alignItems: 'center',
 }
-export const minInputToolbarHeight = 56
+// export const minInputToolbarHeight = 56
+const HEIGHT = 56
+export const minComposerHeight = HEIGHT - 2
+export const minInputToolbarHeight = HEIGHT + 20
 
 export const renderInputToolbar = props => (
   <InputToolbar {...props}
    containerStyle={{
-    heigth: 56,
+    heigth: HEIGHT,
     padding: 8,
     lineHeight: 0
    }}/>

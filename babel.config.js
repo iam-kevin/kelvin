@@ -4,7 +4,7 @@ module.exports = {
     production: {},
   },
   plugins: [
-    "optional-require",
+    // "optional-require", // UNcomment if you want to opt out to react-native-vector-icons
     [
       "@babel/plugin-proposal-decorators",
       {

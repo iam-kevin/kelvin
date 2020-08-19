@@ -69,19 +69,21 @@ export default function Main() {
     }
   }, setStatus, setChatId)
 
-  // const chatId = '-MBjcSrqsuMyQcL7fQxe'
-
-  const onSend = async (message = []) => {
+  const onSend = async (message = [], imageData = undefined) => {
     const { _id, user, ...rest } = Array.isArray(message) ? message[0] : message
+
     const properMessage = {
       ...rest,
       isUser: true
     }
 
-    // send a single message
-    socket.send({ message: properMessage })
+    console.log(message)
+    console.log('Image: ', imageData)
 
-    // NOTE: The ID's of the messages are NOT consistent, 
+    // send a single message
+    socket.send({ message: { ...properMessage, imageData } })
+
+    // NOTE: The ID's of the messages are NOT consistent,
     //  since the id of the message is changed (or populated when)
     //  it reaches the server
     setMessages(prevMessage => GiftedChat.append(prevMessage, message))
