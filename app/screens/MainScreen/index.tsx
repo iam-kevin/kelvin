@@ -5,6 +5,7 @@ import { IMessage, GiftedChat } from 'react-native-gifted-chat'
 import database from '@react-native-firebase/database'
 import { useAuthStore } from '../../models'
 import { Status, MessageHandler } from '../..'
+import { Snackbar } from 'react-native-paper'
 
 const KELVIN_BOT_ID = 985
 
@@ -60,14 +61,23 @@ export default function Main() {
   const [chatId, setChatId] = useState<string | undefined>(undefined)
   // const [canLoadData, setCanLoadData] = useState(false)
   const [status, setStatus] = useState<Status>('connecting')
+  const [socket, setSocket] = useState(undefined)
   const authStore = useAuthStore()
 
-  const socket = ChatSessionConnection(authStore.userId, {
-    reply: function (message) {
-      // render to the screen
-      setMessages(prevMessage => GiftedChat.append(prevMessage, message))
-    }
-  }, setStatus, setChatId)
+  const buildConnection = () => {
+    const socketValue = ChatSessionConnection(authStore.userId, {
+      reply: function (message) {
+        // render to the screen
+        setMessages(prevMessage => GiftedChat.append(prevMessage, message))
+      }
+    }, setStatus, setChatId)
+
+    setSocket(socketValue)
+  }
+
+  useEffect(() => {
+    buildConnection()
+  }, [])
 
   const onSend = async (message = [], imageData = undefined) => {
     const { _id, user, ...rest } = Array.isArray(message) ? message[0] : message
@@ -76,9 +86,6 @@ export default function Main() {
       ...rest,
       isUser: true
     }
-
-    console.log(message)
-    console.log('Image: ', imageData)
 
     // send a single message
     socket.send({ message: { ...properMessage, imageData } })
@@ -97,7 +104,7 @@ export default function Main() {
             const retrMessage = snap.val()
 
             // FIXME: Watchout for the last message
-            const messages = Object.keys(snap.val()).reverse().map((key) => {
+            const messages = Object.keys(snap.val()).map((key) => {
               const { createdAt, ...rest } = retrMessage[key]
 
               return {
@@ -108,8 +115,7 @@ export default function Main() {
               }
             })
 
-            setMessages(messages.reverse())
-            // console.log(messages)
+            setMessages(messages)
           }
         })
     } else {
@@ -121,12 +127,26 @@ export default function Main() {
   return (
     <MainContainer
       onLogoPress={() => authStore.logOut()}
+      progressVisible={status === 'connecting'}
       status={status}>
       <ChatArea
         onSend={onSend}
         messages={messages}
         // inverted={false}
       />
+
+      <Snackbar
+        visible={status === 'offline'}
+        onDismiss={() => {
+          console.log('Reconnecting to server...')
+        }}
+        action={{
+          label: 'Re try',
+          onPress: buildConnection,
+        }}
+      >
+        Unable to connect to the server
+      </Snackbar>
     </MainContainer>
   )
 }

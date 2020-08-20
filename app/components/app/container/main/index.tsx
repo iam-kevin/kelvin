@@ -2,9 +2,10 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { View, StatusBar, StyleSheet, Text } from 'react-native'
 import { color } from '../../../../theme'
-import { TouchableRipple } from 'react-native-paper'
 import HeaderLogo from '../../../../assets/svg/AltMiniHeaderLogo'
 import { Status } from '../../../..'
+
+import { ProgressBar, TouchableRipple } from 'react-native-paper'
 
 export const VIEW_STYLE = { flex: 1, backgroundColor: color.palette.white }
 
@@ -78,9 +79,10 @@ const AppHeader = ({ onLogoPress, status }) => {
   )
 }
 
-function WrapperContainer ({ children }) {
+function WrapperContainer ({ progressVisible, children }) {
   return (
     <SafeAreaView style={VIEW_STYLE}>
+      <ProgressBar visible={progressVisible} color={color.app.theme.yellow} indeterminate={true} progress={0.7}/>
       <StatusBar barStyle='default' backgroundColor={color.app.statusBar} />
       <View style={VIEW_STYLE}>
         {children}
@@ -89,9 +91,10 @@ function WrapperContainer ({ children }) {
   )
 }
 
-export default function MainContainer ({ children, onLogoPress, status }) {
+export default function MainContainer ({ children, progressVisible, onLogoPress, status }) {
   return (
-    <WrapperContainer>
+    <WrapperContainer
+      progressVisible={progressVisible !== undefined && progressVisible}>
       <AppHeader onLogoPress={onLogoPress} status={status} />
       {children}
     </WrapperContainer>
