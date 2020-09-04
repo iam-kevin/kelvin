@@ -6,6 +6,8 @@ Stateless Swahili NLP powered chatbot
 
 Project was done as part of a university project
 
+Most of the services (including the main server) were using free tier services (or those we have borrowed only for the purpose of FYP) and how has been disabled. When transitioning to the payed service, please make the change to the socket server (called at  `178.62.101.62`) to a desireable link
+
 This app is an interface for the other projects ([kelvin-bounce-server](https://github.com/iam-kevin/kelvin-bounce-server)) (Socket Server), and other subsystem which are also AI powered. To create a system that would ideally help your local swahili farmer, work with simple agriculture related issues, including.
 - Asking for the weather
 - Taking a picture of a wheat / tomato leaf, to figure out whether or not it is healthy or not
